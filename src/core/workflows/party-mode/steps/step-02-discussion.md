@@ -9,9 +9,14 @@ description: "Run the multi-reviewer discussion and compile unified findings"
 
 > **Active reviewers only.** Read the active reviewer list from step 1 (determined by `user_instructions.review_scope`). Skip any reviewer section below whose code is not in the active list. Only active reviewers speak and produce findings.
 
+> **User instructions (if `user_instructions.provided` is true):** Before each reviewer begins, they must:
+> 1. Prioritize any `focus_areas` above their default checklist
+> 2. Include all `custom_requirements` as mandatory checks (prefix each finding with "MANDATORY:")
+> 3. Use `context_notes` as background — do not flag issues the user explicitly accepted as trade-offs
+
 ### 1. Round 1 — Each Reviewer's Initial Take
 
-Go through the diff once per reviewer. Each reviewer applies rules from the PR knowledge base loaded in step 1 in addition to their domain expertise.
+Go through the diff once per reviewer. Each reviewer applies rules from the PR knowledge base loaded in step 1, applies `user_instructions` (focus areas, mandatory requirements, context notes), and uses their domain expertise.
 
 ---
 

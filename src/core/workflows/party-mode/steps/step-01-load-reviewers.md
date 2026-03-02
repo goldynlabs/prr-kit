@@ -15,10 +15,17 @@ It contains stack-specific rules, ESLint/linting rules, project guidelines (CLAU
 
 If no knowledge base exists (DP was not run), proceed with local context only — do not block.
 
-**Read `user_instructions.review_scope`** from the knowledge base:
-- If `"all"` (or knowledge base missing) → all 5 reviewers are active.
-- If a list (e.g. `[SR, AR]`) → only activate reviewers matching those codes:
-  `GR` = Alex · `SR` = Sam · `PR` = Petra · `AR` = Arch · `BR` = Biz
+**Read `user_instructions`** from the knowledge base:
+
+- **`review_scope`**: determines active reviewers
+  - If `"all"` (or knowledge base missing) → all 5 reviewers are active.
+  - If a list (e.g. `[SR, AR]`) → only activate reviewers matching those codes:
+    `GR` = Alex · `SR` = Sam · `PR` = Petra · `AR` = Arch · `BR` = Biz
+
+- **`focus_areas`** / **`custom_requirements`** / **`context_notes`**: if `user_instructions.provided` is true, store these in working context — all active reviewers will apply them in step 2:
+  - `focus_areas` → each reviewer must prioritize these areas above their default checklist
+  - `custom_requirements` → treat as mandatory checks (prefix each with "MANDATORY:")
+  - `context_notes` → background info explaining trade-offs or constraints; do not flag issues the user has explicitly accepted
 
 ### 2. Introduce Party Mode
 

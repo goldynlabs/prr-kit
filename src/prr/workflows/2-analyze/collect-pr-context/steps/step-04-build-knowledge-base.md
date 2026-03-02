@@ -16,7 +16,18 @@ Transform collected data into structured knowledge base optimized for reviewers.
 🧠 Building PR-specific knowledge base...
 ```
 
-### 2. Create Knowledge Base Structure
+### 2. Map `manual_context` → `user_instructions`
+
+Using the `manual_context` variable set in step-03:
+
+- **If `manual_context` is null** (user skipped): set `user_instructions.provided = false`, all other fields `null`.
+- **If `manual_context` is not null** (user provided text): set `user_instructions.provided = true`, `raw = manual_context`, then parse the free-form text:
+  - `review_scope` — look for scope signals ("only SR", "skip performance", "security and architecture"). Default `"all"` if none found.
+  - `focus_areas` — extract specific things to prioritize (e.g. "focus on JWT handling" → `["JWT handling"]`). `null` if none.
+  - `custom_requirements` — extract mandatory checks the user stated (e.g. "all endpoints must have auth middleware"). `null` if none.
+  - `context_notes` — extract background info, trade-offs, constraints. `null` if none.
+
+### 3. Create Knowledge Base Structure
 
 Build YAML structure with all collected context:
 
@@ -287,6 +298,11 @@ reviewer_guidance:
     - "Verify Container/Presentational pattern"
     - "Check Pinia setup function style (not Options API)"
     - "Verify SRP adherence"
+
+  business_review:
+    - "Verify feature matches acceptance criteria"
+    - "Check for user-facing regressions"
+    - "Flag missing observability (logging, metrics) for new flows"
 
 context_sources:
   # Track what sources were used
