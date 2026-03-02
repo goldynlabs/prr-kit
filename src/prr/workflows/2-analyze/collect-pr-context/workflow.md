@@ -26,8 +26,10 @@ output_file: "{session_output}/pr-context.yaml"
 
 ## WHEN TO RUN
 
-**Automatically** after [DP] Describe PR in the quick workflow.
-Runs before any review workflows to provide fresh context.
+**In [QR] Quick Review:** runs automatically as Phase 2.5 — no manual step needed.
+
+**In standalone mode:** run manually after [DP] Describe PR and before starting any review workflow (GR/SR/PR/AR/BR).
+The master agent will remind you to run context collection if you attempt to start a review without it.
 
 ## CONTEXT SOURCES
 

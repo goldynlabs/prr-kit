@@ -41,7 +41,7 @@ platforms:
       template_type: antigravity
 
   auggie:
-    name: "Auggie"
+    name: "Augment Code"
     preferred: false
     category: cli
     description: "AI development tool"
@@ -122,10 +122,10 @@ platforms:
     description: "OpenCode terminal coding assistant"
     installer:
       targets:
-        - target_dir: .opencode/agent
+        - target_dir: .opencode/agents
           template_type: opencode
           artifact_types: [agents]
-        - target_dir: .opencode/command
+        - target_dir: .opencode/commands
           template_type: opencode
           artifact_types: [workflows]
 
@@ -139,7 +139,7 @@ platforms:
       template_type: default
 
   roo:
-    name: "Roo Cline"
+    name: "Roo Code"
     preferred: false
     category: ide
     description: "Enhanced Cline fork"

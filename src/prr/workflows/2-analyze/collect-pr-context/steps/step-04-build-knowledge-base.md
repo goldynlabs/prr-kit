@@ -344,4 +344,4 @@ Review workflows (GR, SR, PR, AR, BR) find the knowledge base via working contex
 
 ### 7. Workflow Complete
 
-Mark workflow as complete. Context is ready for use by review workflows (GR, SR, PR, AR).
+Mark workflow as complete. Context is ready for use by review workflows (GR, SR, PR, AR, BR, IC).

@@ -278,18 +278,20 @@ Pauses **twice** for user input: once to select the PR/branch, once for review i
 
 | Code | Command | Description |
 |------|---------|-------------|
-| `SP` | Select PR | Fetch latest → list open PRs (via `gh`) or branches → select head + base → load diff |
+| `SP` | Select PR | Fetch latest → list open PRs or branches → select head + base → load diff |
 | `DP` | Describe PR | Classify PR type, generate summary, file-by-file walkthrough |
+| `CC` | Collect Context | Build PR-specific knowledge base from project docs, config files, standards, and external tools — run after DP, before any review |
 | `GR` | General Review | Logic, naming, readability, DRY, best practices, etc. — adapted to your stack |
 | `SR` | Security Review | OWASP Top 10, secrets, auth, rate limits, injection, etc. — adapted to your project |
 | `PR` | Performance Review | N+1 queries, memory leaks, async patterns, caching, etc. — adapted to your stack |
 | `AR` | Architecture Review | SOLID, layers, coupling, consistency with codebase, etc. — adapted to your architecture |
 | `BR` | Business Review | User impact, business risk, feature completeness, data safety, observability — adapted to your project |
+| `PM` | Party Mode 🎉 | All reviewers discuss the PR together in one collaborative session |
 | `IC` | Improve Code | Concrete BEFORE/AFTER code suggestions |
 | `AK` | Ask Code | Q&A about specific changes in this PR |
 | `RR` | Generate Report | Compile all findings → Markdown report in `_prr-output/reviews/` |
-| `PC` | Post Comments | Post inline code comments to GitHub PR via `gh` Reviews API |
-| `PM` | Party Mode 🎉 | All reviewers in one collaborative session |
+| `PC` | Post Comments | Post inline review comments to GitHub, GitLab, Azure DevOps, or Bitbucket PR |
+| `SS` | Select Session | List past review sessions and resume one |
 | `CL` | Clear | Remove context files and/or review reports from output folder |
 | `HH` | Help | Show this guide |
 
@@ -320,7 +322,7 @@ Enter PR number → base and head resolved automatically.
 | PRR Master | `/prr-master` | Orchestrator — routes all workflows, full menu |
 | PRR Quick | `/prr-quick` | One-command full pipeline (select → review → report) |
 
-Specialist reviewer agents are orchestrated internally by the master agent and party-mode workflow. Use `[PM] Party Mode` from the master menu to run all reviewers in a collaborative session.
+Specialist reviewer agents are orchestrated internally by the master agent and party-mode workflow. Use **[PM] Party Mode** from the master menu (`/prr-master`) to run all reviewers together in one collaborative session.
 
 ## Reviewers at a Glance
 
@@ -347,7 +349,10 @@ All findings use a standard format:
 
 ## Context Collection
 
-After [DP] Describe PR, context is collected **automatically** — then the agent pauses once for your instructions:
+**In [QR] Quick Review:** context is collected automatically as Phase 2.5 — no manual step needed.
+**In manual mode (SP → DP → reviews):** run **[CC] Collect Context** after [DP] and before starting any review.
+
+Either way, the agent pauses once for your instructions before building the knowledge base:
 
 1. Analyzes changed files to detect domains (`authentication`, `state-management`, etc.)
 2. Reads relevant config files (`.eslintrc`, `.prettierrc`, `tsconfig.json`) and standards docs (`CONTRIBUTING.md`, `ARCHITECTURE.md`)
@@ -371,7 +376,7 @@ When `[PC] Post Comments` is run with `platform_repo` configured, it posts findi
 
 ## Supported IDEs
 
-Antigravity, Auggie, Claude Code, Cline, Codex, Crush, Cursor, Gemini CLI, GitHub Copilot, iFlow, Kilo, Kiro, OpenCode, QwenCoder, Roo Cline, Rovo Dev, Trae, Windsurf
+Antigravity, Augment Code, Claude Code, Cline, Codex, Crush, Cursor, Gemini CLI, GitHub Copilot, iFlow, Kilo, Kiro, OpenCode, QwenCoder, Roo Code, Rovo Dev, Trae, Windsurf
 
 ## Requirements
 
@@ -398,10 +403,12 @@ prr-kit/
 │   ├── core/
 │   │   ├── agents/
 │   │   │   └── prr-master.agent.yaml   # Master orchestrator + menu
-│   │   └── tasks/
-│   │       ├── help.md                 # [HH] Help
-│   │       ├── clear.md                # [CL] Clear output files
-│   │       └── workflow.xml            # Workflow engine rules
+│   │   ├── tasks/
+│   │   │   ├── help.md                 # [HH] Help
+│   │   │   ├── clear.md                # [CL] Clear output files
+│   │   │   └── workflow.xml            # Workflow engine rules
+│   │   └── workflows/
+│   │       └── party-mode/             # [PM] Party Mode — all reviewers together
 │   └── prr/
 │       ├── agents/                     # Specialist reviewer agents (GR SR PR AR)
 │       ├── config-template.yaml        # Full config template with all options

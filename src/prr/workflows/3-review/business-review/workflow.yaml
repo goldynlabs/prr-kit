@@ -14,5 +14,5 @@ installed_path: "{project-root}/_prr/prr/workflows/3-review/business-review"
 instructions: "{installed_path}/instructions.xml"
 validation: "{installed_path}/checklist.md"
 
-pr_context: "working-context:target_branch,base_branch,pr_number,pr_knowledge_base"
+pr_context: "working-context:target_branch,base_branch,pr_number,pr_knowledge_base,pr_type,completed_reviews"
 output_file: "{session_output}/business-review.md"

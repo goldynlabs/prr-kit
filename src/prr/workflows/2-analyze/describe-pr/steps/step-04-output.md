@@ -44,6 +44,11 @@ Summary:
 
 Recommended next steps:
 {recommended_reviews}
+
+💡 Before reviewing: run [CC] Collect Context to build a fresh PR-specific knowledge base.
+   Reviews use this context to apply your project's rules, stack-specific guidelines, and any
+   external sources (Jira, Confluence, Figma) — skipping it means reviewers work with
+   general rules only.
 ```
 
 Workflow complete. Return to agent menu.

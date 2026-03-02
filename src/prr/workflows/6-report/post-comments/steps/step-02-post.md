@@ -74,21 +74,40 @@ done
 ---
 
 **Bitbucket:**
+
+**⚠️ Do NOT embed `$(cat ...)` in curl `-d` — the summary body contains emojis and backticks that will break shell expansion.**
+
+Use the runtime script approach to build the summary payload first:
+
+Write `{temp_dir}/build-bb-summary.mjs` (or `.py`) using the Write tool:
+
+```js
+// Node.js
+import { readFileSync, writeFileSync } from 'fs'
+const body = readFileSync("{temp_dir}/prr-summary.md", "utf-8")
+const payload = { content: { raw: body } }
+writeFileSync("{temp_dir}/prr-bb-summary.json", JSON.stringify(payload, null, 2), "utf-8")
+console.log("OK: summary payload written")
+```
+
+Execute: `node "{temp_dir}/build-bb-summary.mjs"`
+
+Then post using `--data @`:
 ```bash
 # Post summary
 curl -s -X POST \
   "https://api.bitbucket.org/2.0/repositories/{platform_repo}/pullrequests/{pr_number}/comments" \
   -H "Authorization: Bearer {BB_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d "{\"content\": {\"raw\": \"$(cat '{temp_dir}/prr-summary.md')\"}}"
+  --data "@{temp_dir}/prr-bb-summary.json"
 
 # Post each inline comment
-for payload in "{temp_dir}/prr-bb-"*.json; do
+for payload in "{temp_dir}/prr-bb-"[0-9]*.json; do
   curl -s -X POST \
     "https://api.bitbucket.org/2.0/repositories/{platform_repo}/pullrequests/{pr_number}/comments" \
     -H "Authorization: Bearer {BB_TOKEN}" \
     -H "Content-Type: application/json" \
-    -d "@$payload"
+    --data "@$payload"
 done
 ```
 
@@ -146,8 +165,12 @@ rm -f "{temp_dir}/prr-payload.json" \
        "{temp_dir}/prr-summary.md" \
        "{temp_dir}/prr-thread-"*.json \
        "{temp_dir}/prr-bb-"*.json \
+       "{temp_dir}/prr-bb-summary.json" \
        "{temp_dir}/build-payload.mjs" \
-       "{temp_dir}/build-payload.py"
+       "{temp_dir}/build-payload.py" \
+       "{temp_dir}/build-bb-summary.mjs" \
+       "{temp_dir}/build-bb-summary.py"
+rmdir "{temp_dir}" 2>/dev/null || true
 ```
 
 ---

@@ -24,10 +24,11 @@ agent:
       - When a PM MCP is available, extract issue key from branch name and fetch acceptance criteria to use as review checklist
 
   critical_actions:
-    - "Context is collected AUTOMATICALLY after Describe PR — no manual context collection needed"
+    - "In [QR] Quick Review: context is collected AUTOMATICALLY as part of the pipeline — no manual step needed"
+    - "In standalone mode (SP → DP → reviews): context is NOT auto-collected. After running DP, remind the user to run [CC] Collect Context before starting any review workflow for best results"
     - "Run [SP] Select PR FIRST before any review — never review without knowing the exact branch/diff"
     - "After Select PR, suggest running [DP] Describe PR to understand scope before diving into review"
-    - "Context collection happens automatically after DP — it's always fresh and PR-specific"
+    - "Context is always fresh and PR-specific — never stale or cached"
     - "Track completed reviews and remind user of remaining uncompleted review types"
     - "For PRs touching auth, API keys, or user data: always suggest [SR] Security Review"
     - "For feature PRs and PRs with data migration: always run [BR] Business Review to assess user impact and deployment risk"
@@ -45,6 +46,10 @@ agent:
     - trigger: "DP or fuzzy match on describe-pr"
       exec: "{project-root}/_prr/prr/workflows/2-analyze/describe-pr/workflow.md"
       description: "[DP] Describe PR: Auto-generate PR type, summary, file-by-file walkthrough"
+
+    - trigger: "CC or fuzzy match on collect-context"
+      exec: "{project-root}/_prr/prr/workflows/2-analyze/collect-pr-context/workflow.md"
+      description: "[CC] Collect Context: Build PR-specific knowledge base (run after DP, before reviews)"
 
     - trigger: "GR or fuzzy match on general-review"
       workflow: "{project-root}/_prr/prr/workflows/3-review/general-review/workflow.yaml"
@@ -69,6 +74,10 @@ agent:
     - trigger: "IC or fuzzy match on improve-code"
       workflow: "{project-root}/_prr/prr/workflows/4-improve/improve-code/workflow.yaml"
       description: "[IC] Improve Code: Concrete inline code suggestions with before/after fixes"
+
+    - trigger: "PM or fuzzy match on party-mode"
+      exec: "{project-root}/_prr/core/workflows/party-mode/workflow.md"
+      description: "[PM] Party Mode: All reviewers discuss the PR together in one collaborative session"
 
     - trigger: "AK or fuzzy match on ask-code"
       exec: "{project-root}/_prr/prr/workflows/5-ask/ask-code/workflow.md"

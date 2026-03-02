@@ -19,50 +19,75 @@ const toc = [
   <h2 id="how">How agents work per IDE</h2>
   <p>
     Different IDEs have different ways to invoke AI agents. The installer handles this for you, but
-    it helps to understand the three main patterns:
+    it helps to understand the main patterns:
   </p>
   <ul>
-    <li><strong>Slash commands</strong> — type <code>/prr-master</code> in the chat input</li>
-    <li><strong>Workflow panel</strong> — open the Workflows panel and select <code>prr-master</code></li>
-    <li><strong>Custom modes or references</strong> — IDE-specific approach (see below)</li>
+    <li><strong>Slash commands</strong> — type <code>/prr-master</code> (or <code>/prr-master.md</code> for Cline) in the chat input</li>
+    <li><strong>Workflow panel</strong> — open the Workflows or Commands panel and select <code>prr-master</code></li>
+    <li><strong>Auto-apply rules</strong> — rules are always active (Trae)</li>
+    <li><strong>Custom modes or hash references</strong> — IDE-specific approach (see Special cases below)</li>
   </ul>
 
   <h2 id="slash">Slash command IDEs</h2>
-  <p>Type <code>/prr-master</code> in the AI chat to open the full review menu, or <code>/prr-quick</code> to run the full pipeline automatically.</p>
+  <p>Type <code>/prr-master</code> in the AI chat input to open the full review menu, or <code>/prr-quick</code> to run the full pipeline automatically.</p>
   <table>
     <thead>
-      <tr><th>IDE</th><th>Command</th></tr>
+      <tr><th>IDE</th><th>Command</th><th>Notes</th></tr>
     </thead>
     <tbody>
-      <tr><td>Claude Code</td><td><code>/prr-master</code></td></tr>
-      <tr><td>Cursor</td><td><code>/prr-master</code></td></tr>
-      <tr><td>Auggie</td><td><code>/prr-master</code></td></tr>
-      <tr><td>Crush</td><td><code>/prr-master</code></td></tr>
-      <tr><td>Gemini CLI</td><td><code>/prr-master</code></td></tr>
-      <tr><td>iFlow</td><td><code>/prr-master</code></td></tr>
-      <tr><td>QwenCoder</td><td><code>/prr-master</code></td></tr>
-      <tr><td>Roo Cline</td><td><code>/prr-master</code></td></tr>
-      <tr><td>Codex</td><td><code>/prr-master</code></td></tr>
+      <tr><td>Claude Code</td><td><code>/prr-master</code></td><td>—</td></tr>
+      <tr><td>Cursor</td><td><code>/prr-master</code></td><td>Requires Cursor 1.6+. Type in <strong>Agent mode</strong> only — not in regular Chat.</td></tr>
+      <tr><td>Windsurf</td><td><code>/prr-master</code></td><td>Type in Cascade chat, or use the Workflows panel.</td></tr>
+      <tr><td>Cline</td><td><code>/prr-master.md</code></td><td>Cline requires the <code>.md</code> extension in the slash command.</td></tr>
+      <tr><td>Augment Code</td><td><code>/prr-master</code></td><td>—</td></tr>
+      <tr><td>Crush</td><td><code>/prr-master</code></td><td>—</td></tr>
+      <tr><td>Gemini CLI</td><td><code>/prr-master</code></td><td>—</td></tr>
+      <tr><td>iFlow</td><td><code>/prr-master</code></td><td>—</td></tr>
+      <tr><td>QwenCoder</td><td><code>/prr-master</code></td><td>—</td></tr>
+      <tr><td>Roo Code</td><td><code>/prr-master</code></td><td>—</td></tr>
+      <tr><td>Codex</td><td><code>/prr-master</code></td><td>—</td></tr>
     </tbody>
   </table>
 
   <h2 id="workflow-panel">Workflow panel IDEs</h2>
-  <p>Open the Workflows panel in your IDE and select <code>prr-master</code> from the list.</p>
+  <p>Open the Workflows or Commands panel in your IDE and select <code>prr-master</code> from the list.</p>
   <table>
     <thead>
       <tr><th>IDE</th><th>Where to find it</th></tr>
     </thead>
     <tbody>
-      <tr><td>Windsurf</td><td>Workflows panel → prr-master</td></tr>
-      <tr><td>Cline</td><td>Workflow runner → prr-master</td></tr>
       <tr><td>Rovo Dev</td><td>Workflows panel → prr-master</td></tr>
-      <tr><td>Trae</td><td>Workflow runner → prr-master</td></tr>
       <tr><td>Antigravity</td><td>Workflow runner → prr-master</td></tr>
       <tr><td>OpenCode</td><td>Commands panel → prr-master</td></tr>
     </tbody>
   </table>
 
+  <p>Trae is a special case — see below.</p>
+
   <h2 id="special">Special cases</h2>
+
+  <h3>Cursor</h3>
+  <p>
+    Cursor slash commands (<code>.cursor/commands/</code>) were introduced in <strong>Cursor 1.6</strong> and are
+    currently in beta. They only work in <strong>Agent mode</strong> — open the Agent panel in Cursor (not the
+    regular Chat tab) and type <code>/prr-master</code> or <code>/prr-quick</code>.
+    If you are on an older version of Cursor, update to 1.6 or later first.
+  </p>
+
+  <h3>Cline</h3>
+  <p>
+    Cline slash commands require the full filename including the <code>.md</code> extension.
+    Type <code>/prr-master.md</code> or <code>/prr-quick.md</code> in the Cline chat input.
+    Workflows are installed to <code>.clinerules/workflows/</code>.
+  </p>
+
+  <h3>Windsurf</h3>
+  <p>
+    Windsurf workflows support two invocation methods: type <code>/prr-master</code> directly in the
+    Cascade chat, or open the Workflows panel (via the Customizations icon) and select
+    <code>prr-master</code> from the list. Both work identically.
+    Workflows are installed to <code>.windsurf/workflows/</code>.
+  </p>
 
   <h3>GitHub Copilot</h3>
   <p>
@@ -79,15 +104,23 @@ const toc = [
 
   <h3>Kiro</h3>
   <p>
-    Reference the master agent in Kiro chat: <code>@_prr/core/agents/prr-master.md</code>. Kiro uses
-    steering files from <code>.kiro/steering/</code>.
+    Type <code>#prr-master</code> in the Kiro chat to reference the steering file on-demand.
+    Kiro uses <code>#filename</code> (hash) to reference steering files from <code>.kiro/steering/</code>
+    — not slash commands or <code>@</code> mentions.
+  </p>
+
+  <h3>Trae</h3>
+  <p>
+    Trae rules installed to <code>.trae/rules/</code> apply <strong>automatically</strong> to every AI
+    response in that workspace — no explicit invocation is needed. Open Trae in your project after
+    installing prr-kit and the PRR review instructions will be active.
   </p>
 
   <h2 id="all">All supported IDEs</h2>
   <p>The full list of supported AI IDEs:</p>
   <ul>
     <li>Antigravity</li>
-    <li>Auggie</li>
+    <li>Augment Code</li>
     <li>Claude Code</li>
     <li>Cline</li>
     <li>Codex</li>
@@ -100,7 +133,7 @@ const toc = [
     <li>Kiro</li>
     <li>OpenCode</li>
     <li>QwenCoder</li>
-    <li>Roo Cline</li>
+    <li>Roo Code</li>
     <li>Rovo Dev</li>
     <li>Trae</li>
     <li>Windsurf</li>

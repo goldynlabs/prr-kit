@@ -238,6 +238,12 @@ Analyze the diff and classify as one of: `bugfix` | `feature` | `refactor` | `pe
 For each changed file, write a 1-2 sentence summary of what changed and why.
 Group by: new files | modified files | deleted files | renamed files.
 
+### 2b2. Generate Impact Map
+Scan for cross-cutting side effects following the same logic as `describe-pr/steps/step-03-walkthrough.md` section 3:
+- Shared/generic module changes → count consumers, flag breaking vs additive
+- Side effect scan → observer/reactive dependencies outside the diff
+- Output the IMPACT MAP block
+
 ### 2c. Output description
 Print to screen:
 ```
@@ -249,7 +255,12 @@ Print to screen:
 
 ### Files Changed
 {walkthrough table}
+
+{impact_map}
 ```
+
+Write description to file: `{session_output}/pr-description.md`
+Store `pr_type` and `risk_level` in working context.
 
 ---
 
@@ -268,14 +279,12 @@ On completion, store `pr_knowledge_base` = path to the generated context file.
 ## PHASE 3 — REVIEW
 *Execute all review types automatically, one by one.*
 
-**Before each review, set these variables so the review instructions resolve correctly:**
-- `pr_context` = working context (`target_branch`, `base_branch`, `pr_number`, `pr_knowledge_base`)
-- `target_branch` = `pr_context.pr.target_branch`
-- `base_branch` = `pr_context.pr.base_branch`
-- `pr_number` = `pr_context.pr.pr_number`
-- `pr_knowledge_base` = path stored in `pr_context` (set by Phase 2.5)
-- `target_repo`, `communication_language` = from config
-- `output_file` = per-review path defined below *(ensures findings are saved to disk for [RR] and [PC] later)*
+**Before each review, confirm these variables are set in working context (all set by earlier phases):**
+- `target_branch`, `base_branch`, `pr_number` — set by Phase 1 (Select PR)
+- `pr_knowledge_base` — set by Phase 2.5 (`{session_output}/pr-context.yaml`)
+- `session_output` — set by Phase 1 when session folder was created
+- `target_repo`, `communication_language` — from config
+- `output_file` — per-review path defined below *(ensures findings are saved to disk for [RR] and [PC] later)*
 
 **Scope gate:** Read `user_instructions.review_scope` from `{pr_knowledge_base}`.
 - If `"all"` (or knowledge base missing) → run all reviews 3a–3e normally.
@@ -335,6 +344,7 @@ Count totals:
 - `{blocker_count}` = number of 🔴 findings
 - `{warning_count}` = number of 🟡 findings
 - `{suggestion_count}` = number of 🟢 findings
+- `{question_count}` = number of ❓ findings
 
 Write report to: `{session_output}/final-review.md`
 
@@ -391,6 +401,7 @@ Report:  {session_output}/final-review.md
 🔴 Blockers:    {blocker_count}
 🟡 Warnings:    {warning_count}
 🟢 Suggestions: {suggestion_count}
+❓ Questions:   {question_count}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 

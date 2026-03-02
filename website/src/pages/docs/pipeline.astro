@@ -4,7 +4,7 @@ import DocsLayout from '../../layouts/DocsLayout.astro'
 const toc = [
   { label: 'Quick mode', anchor: 'quick-mode' },
   { label: 'Manual mode', anchor: 'manual-mode' },
-  { label: 'The seven steps', anchor: 'steps' },
+  { label: 'The six steps', anchor: 'steps' },
   { label: 'Severity levels', anchor: 'severity' },
 ]
 ---
@@ -31,7 +31,7 @@ const toc = [
   <pre><code>/prr-master</code></pre>
   <p>From the menu, you can run any step individually, re-run a specific reviewer, or skip steps you do not need.</p>
 
-  <h2 id="steps">The seven steps</h2>
+  <h2 id="steps">The six steps</h2>
 
   <h3>1. Select PR</h3>
   <p>
@@ -47,8 +47,9 @@ const toc = [
 
   <h3>3. Collect context</h3>
   <p>
-    Runs automatically after step 2. Analyzes the changed files to detect relevant domains, reads
-    project config files and standards documents, extracts inline annotations from the diff, and
+    In quick mode, runs automatically after step 2. In manual mode, run <strong>[CC] Collect Context</strong>
+    from the master menu after describing the PR. Analyzes the changed files to detect relevant domains,
+    reads project config files and standards documents, extracts inline annotations from the diff, and
     optionally queries MCP tools or RAG systems.
   </p>
   <p>
