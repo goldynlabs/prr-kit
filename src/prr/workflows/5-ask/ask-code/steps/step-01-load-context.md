@@ -10,9 +10,9 @@ nextStepFile: "./step-02-answer.md"
 
 ### 1. Load PR Context
 
-Read `{review_output}/current-pr-context.yaml`.
+Use `session_output`, `target_branch`, `base_branch` from working context.
 
-If not found, prompt user to run [SP] Select PR first.
+If not set, prompt user to run [SS] Select Session or [SP] Select PR first.
 
 ### 2. Load the Diff
 

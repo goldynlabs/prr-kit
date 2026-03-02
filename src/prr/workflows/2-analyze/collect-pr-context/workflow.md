@@ -3,7 +3,7 @@ name: collect-pr-context
 description: "Collect fresh, PR-specific context from multiple sources after describing the PR"
 main_config: "{project-root}/_prr/prr/config.yaml"
 nextStep: "./steps/step-01-analyze-files.md"
-output_file: "{review_output}/pr-{pr_number}-context.yaml"
+output_file: "{session_output}/pr-context.yaml"
 ---
 
 # Collect PR-Specific Context Workflow
@@ -108,16 +108,14 @@ If a stack has no matching data file, skip it silently and proceed with general 
 4-step process:
 1. **Analyze files** changed in PR — extract metadata, domains, and **detect technology stacks**
 2. **Collect context** from all sources: primary docs, config files, standards docs, inline annotations, **stack-specific rules**, MCP tools, RAG systems
-3. **Manual context input** — prompt the user for any additional context (business rationale, focus areas, known trade-offs). Skip automatically if `context_collection.skip_manual_input_context: true` in config. If the user provides input, it is marked **⚠️ IMPORTANT** and reviewers treat it as highest-priority context
+3. **Manual context input** — prompt the user for any additional context (business rationale, focus areas, known trade-offs). **Always runs — user must respond before continuing.** If the user provides input, it is marked **⚠️ IMPORTANT** and reviewers treat it as highest-priority context
 4. **Build PR-specific knowledge base** — structured YAML with all context, stack rules, manual context, and reviewer guidance
 
 ## INITIALIZATION
 
 Load config from `{main_config}`.
 
-Check if PR number is available:
-- If available: use `pr-{pr_number}-context.yaml`
-- If not: use `pr-{branch_name}-context.yaml`
+Output filename is always `pr-context.yaml` — the session folder already identifies the PR uniquely.
 
 ## EXECUTION
 

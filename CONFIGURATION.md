@@ -22,7 +22,6 @@ auto_post_comment: false
 
 context_collection:
   enabled: true
-  skip_manual_input_context: false
   mode: pr-specific
 
 external_sources:
@@ -52,40 +51,45 @@ After describing the PR, the agent automatically collects fresh context relevant
 
 1. **Analyze changed files** — detect file types, categories (`vue-component`, `pinia-store`, etc.) and domains (`authentication`, `state-management`, etc.)
 2. **Collect from matching sources** — only sources relevant to the changed files and domains are read
-3. **Manual context input** — the agent pauses and asks the user for any additional context (business rationale, focus areas, known trade-offs). If the user provides input, it is marked **⚠️ IMPORTANT** and all reviewers treat it as the highest-priority context. Set `skip_manual_input_context: true` to skip this prompt
-4. **Build knowledge base** — written to `pr-{branch}-context.yaml`, loaded by all reviewers
+3. **Instructions input** — the agent pauses and asks for scope, focus, requirements, or context. **Always runs — user must respond before continuing.** Empty response = full standard review. Any input is parsed and stored as **⚠️ IMPORTANT** — controlling which reviews run and what every reviewer prioritizes
+4. **Build knowledge base** — written to `pr-context.yaml` inside the session folder, loaded by all reviewers
 
 ```yaml
 context_collection:
   enabled: true
-  skip_manual_input_context: false
   mode: pr-specific
 ```
 
 | Option | Example | Description |
 |---|---|---|
 | `enabled` | `true` | Set to `false` to disable automatic context collection entirely |
-| `skip_manual_input_context` | `false` | Set to `true` to skip the manual context input prompt. Default `false` — the agent will pause and ask the user for additional context before building the knowledge base |
 | `mode` | `pr-specific` | Only supported value: `pr-specific` — always fresh context per PR, never cached |
 
-### 3.0 Manual context input
+### 3.0 Instructions input
 
 After auto-collection, the agent pauses and asks:
 
 ```
-💬 Do you have any additional context for the reviewers?
+💬 Any instructions for this review?
+   Press Enter to run a full standard review, or type your instructions below.
 
-You can share:
-  • Business context or requirements behind this PR
-  • Known trade-offs or constraints you accepted
-  • Specific areas you'd like reviewers to focus on
-  • Known issues or technical debt to be aware of
-  • Links to related tickets, designs, or decisions
+   You can specify:
+     • Scope        "only security" / "security and architecture" / "skip performance"
+     • Focus        "focus on SQL injection and rate limiting"
+     • Requirements "all API endpoints must have auth middleware"
+     • Context      "hotfix — ignore refactoring suggestions"
+     • Mix freely   "security only, focus on JWT handling, context: auth rewrite in progress"
 ```
 
-If you provide a response, it is stored in the knowledge base under `manual_context` and flagged as **⚠️ IMPORTANT**. All reviewer agents read this section before starting their analysis and align their findings against it. Type `skip` or press Enter without input to continue without adding context.
+**Press Enter / leave empty** → full standard review runs, all reviewers active, standard focus.
 
-Set `skip_manual_input_context: true` in your config to bypass this prompt entirely (useful for fully automated pipelines).
+**Type instructions** → the agent parses your input and extracts:
+- **Scope** — which reviews to run. `"only security"` → only Security Review runs. `"skip performance"` → all except Performance. If no scope signal is found, all reviews run.
+- **Focus areas** — specific things every active reviewer must prioritize.
+- **Requirements** — mandatory checks added to every reviewer's checklist.
+- **Context** — background info, trade-offs, constraints the reviewers should be aware of.
+
+These instructions are stored in the knowledge base under `user_instructions` and flagged as **⚠️ IMPORTANT**. All reviewer agents read this section first and align their findings against it. The `review_scope` field controls which review workflows actually execute — skipped reviews do not produce output files.
 
 ### 3.1 What the agent collects
 
@@ -218,15 +222,42 @@ sources:
 
 ## 5. Review output
 
-All output is written to the path specified in `review_output`.
+Each PR review session is saved in a dedicated folder under `review_output`:
+
+```
+{review_output}/
+└── 2026-03-02-1430-pr44-feature-auth-login/   ← {date}-{time}-{slug}
+    ├── diffs/                                  ← file-by-file diff snapshots
+    │   └── src/auth/login.ts.md
+    ├── pr-context.yaml
+    ├── pr-description.md
+    ├── general-review.md
+    ├── security-review.md
+    ├── performance-review.md
+    ├── architecture-review.md
+    ├── business-review.md
+    ├── improve-code.md
+    └── final-review.md
+```
 
 | File | Description |
 |---|---|
-| `current-pr-context.yaml` | Active session state — which PR is selected, reviews completed |
-| `pr-{branch}-context.yaml` | Per-PR knowledge base built during context collection |
-| `review-{branch}-{date}.md` | Final review report with all findings sorted by severity |
+| `diffs/` | File-by-file diff snapshots mirroring the repo tree — one `.md` per changed file with diff blocks |
+| `pr-context.yaml` | PR knowledge base — stack rules, standards, inline annotations |
+| `pr-description.md` | PR type classification and file-by-file walkthrough |
+| `general-review.md` | General code quality findings |
+| `security-review.md` | Security findings |
+| `performance-review.md` | Performance findings |
+| `architecture-review.md` | Architecture findings |
+| `business-review.md` | Business impact findings |
+| `improve-code.md` | Inline code suggestions (if [IC] was run) |
+| `final-review.md` | Final compiled report with all findings sorted by severity |
 
-> **Tip:** Add `_prr-output/` to your `.gitignore` to keep generated review reports out of version control. Use `[CL] Clear` from the agent menu to remove context files when starting fresh.
+### Resuming a session
+
+Session folders persist across conversations. When you start a new conversation and want to continue a review you started earlier, run `[SS] Select Session`. The agent will list all past sessions and let you pick one — restoring the branch, PR number, and output path into working context so you can run any command as if you never left.
+
+> **Tip:** Add `_prr-output/` to your `.gitignore` to keep review output out of version control. Use `[SS] Select Session` to resume a past session, or `[CL] Clear` to delete old sessions.
 
 ---
 
@@ -282,6 +313,24 @@ external_sources:
 ---
 
 ## 7. FAQs
+
+### How do I continue a review in a new conversation?
+
+Run `[SS] Select Session`. The agent lists all session folders in your `review_output` directory and lets you pick one:
+
+```
+[1] 2026-03-02 14:30 — PR #44  feature/auth-login
+    Reviews: DP ✓  GR ✓  SR ✓
+    Report:  —
+
+[2] 2026-03-01 09:15 — fix/null-pointer-checkout
+    Reviews: DP ✓  GR ✓  SR ✓  PR ✓  AR ✓  BR ✓
+    Report:  final-review.md ✓
+```
+
+Selecting a session restores `session_output`, `target_branch`, `base_branch`, and `pr_number` into working context. You can then run any command — `[AR]`, `[RR]`, `[PC]`, etc. — exactly as if you never left.
+
+---
 
 ### How do I get review output in my language instead of English?
 

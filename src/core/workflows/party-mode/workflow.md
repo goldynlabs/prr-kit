@@ -2,7 +2,7 @@
 name: party-mode
 description: "Multi-reviewer discussion: all specialized agents review and debate the PR together"
 main_config: "{project-root}/_prr/prr/config.yaml"
-nextStep: "./steps/step-01-load-reviewers.md"
+nextStep: "./steps/step-00-user-instructions.md"
 ---
 
 # Party Mode Workflow 🎉
@@ -11,9 +11,10 @@ nextStep: "./steps/step-01-load-reviewers.md"
 
 ## WORKFLOW ARCHITECTURE
 
-2-step process:
-1. Load reviewer personas and assign sections
-2. Run structured discussion with each reviewer contributing findings
+3-step process:
+1. Collect user instructions (scope, focus, requirements, context) — always runs, user must respond
+2. Load reviewer personas filtered by scope
+3. Run structured discussion with each active reviewer contributing findings
 
 ## WHEN TO USE
 
@@ -26,9 +27,8 @@ Use Party Mode when you want:
 ## INITIALIZATION
 
 Load config from `{main_config}`.
-Load PR context from `{review_output}/current-pr-context.yaml`.
-
-If no PR context exists, prompt user to run [SP] Select PR first.
+Use `session_output`, `target_branch`, `base_branch`, `pr_number` from working context.
+If not set: prompt user to run [SS] Select Session or [SP] Select PR first.
 
 ## EXECUTION
 

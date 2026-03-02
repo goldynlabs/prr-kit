@@ -10,9 +10,9 @@ nextStepFile: "./step-02-post.md"
 
 ### 1. Check Prerequisites
 
-Verify `{review_output}/current-pr-context.yaml` exists and contains:
-- `pr_number` — if missing, show: `❌ No PR number found. Run [SP] Select PR first.`
-- `target_branch`, `base_branch`
+Verify working context contains:
+- `pr_number` — if missing, show: `❌ No PR number found. Run [SS] Select Session or [SP] Select PR first.`
+- `target_branch`, `base_branch`, `session_output`
 
 Verify platform CLI is available:
 
@@ -54,8 +54,7 @@ Store as `{commit_sha}`.
 
 ### 3. Load Review Report
 
-Find the latest report in `{review_output}/review-*.md`.
-Sort by modification time, take the most recent.
+Read the report at `{session_output}/final-review.md`.
 
 ### 4. Parse All Findings
 

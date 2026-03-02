@@ -22,6 +22,5 @@ validation-target: "General review output file"
 - [ ] Side effect findings include: the affected location OUTSIDE the diff (not just the changed file)
 
 ## Output
-- [ ] Findings written to `{review_output}/general-review-{date}.md`
-- [ ] PR context updated with `general-review` in completed list
+- [ ] Findings written to `{session_output}/general-review.md`
 - [ ] At least one positive observation included (balanced review)

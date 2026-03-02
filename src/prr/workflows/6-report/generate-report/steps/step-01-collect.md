@@ -8,19 +8,23 @@ nextStepFile: "./step-02-organize.md"
 
 ## Sequence of Instructions
 
-### 1. Load PR Context
+### 1. Detect Completed Reviews
 
-Read `{review_output}/current-pr-context.yaml` to get list of completed reviews.
+Check which review files exist in `{session_output}/`:
+
+```bash
+ls "{session_output}/"
+```
 
 ### 2. Collect Review Output Files
 
-For each completed review in `review.completed` list, read the corresponding output file:
-- `general-review` → `{review_output}/general-review-*.md` (latest)
-- `security-review` → `{review_output}/security-review-*.md` (latest)
-- `performance-review` → `{review_output}/performance-review-*.md` (latest)
-- `architecture-review` → `{review_output}/architecture-review-*.md` (latest)
-- `business-review` → `{review_output}/business-review-*.md` (latest)
-- `improve-code` → `{review_output}/improve-code-*.md` (latest)
+For each review file that exists, read it:
+- `general-review` → `{session_output}/general-review.md`
+- `security-review` → `{session_output}/security-review.md`
+- `performance-review` → `{session_output}/performance-review.md`
+- `architecture-review` → `{session_output}/architecture-review.md`
+- `business-review` → `{session_output}/business-review.md`
+- `improve-code` → `{session_output}/improve-code.md`
 
 ### 3. Parse All Findings
 

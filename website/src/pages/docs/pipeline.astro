@@ -17,8 +17,8 @@ const toc = [
 
   <h2 id="quick-mode">Quick mode</h2>
   <p>
-    Quick mode runs the full pipeline in one command. It pauses to ask which PR or branch to
-    review, and once more to ask for optional additional context, then handles everything else automatically.
+    Quick mode runs the full pipeline in one command. It pauses twice: once to select the PR or branch,
+    and once to ask for review instructions (scope, focus, requirements, or context). Everything else runs automatically.
   </p>
   <p>Start it from your AI IDE:</p>
   <pre><code>/prr-quick</code></pre>
@@ -52,13 +52,13 @@ const toc = [
     optionally queries MCP tools or RAG systems.
   </p>
   <p>
-    After auto-collection, the agent pauses and asks you for any additional context — such as business
-    rationale, known trade-offs, or specific areas to focus on. If you provide input, it is marked
-    <strong>⚠️ IMPORTANT</strong> and all reviewer agents treat it as the highest-priority context.
-    You can skip this prompt by pressing Enter, or disable it permanently with
-    <code>skip_manual_input_context: true</code> in your config.
+    After auto-collection, the agent pauses and asks for review instructions — you can specify which
+    reviews to run (<code>"only security"</code>, <code>"skip performance"</code>), what to focus on,
+    mandatory requirements, or background context. Press Enter for a full standard review.
+    If you provide input, it is stored as <strong>⚠️ IMPORTANT</strong> and controls which reviewers
+    run and what they prioritize.
   </p>
-  <p>The result is saved as a context file loaded by all reviewer agents.</p>
+  <p>The result is saved as <code>pr-context.yaml</code> inside the session folder, loaded by all reviewer agents.</p>
 
   <h3>4. Deep code review</h3>
   <p>

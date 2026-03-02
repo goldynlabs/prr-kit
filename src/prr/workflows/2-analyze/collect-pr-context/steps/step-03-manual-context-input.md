@@ -1,88 +1,102 @@
 ---
 name: "step-03-manual-context-input"
-description: "Collect additional context manually from the user"
+description: "Collect user instructions, requirements, and context for this review session"
 nextStepFile: "./step-04-build-knowledge-base.md"
 ---
 
-# Step 3: Manual Context Input
+# Step 3: User Instructions & Context
 
 ## Goal
-Give the user the opportunity to provide additional context that automated collection cannot capture — such as business rationale, known trade-offs, special constraints, or specific areas to focus on.
+Let the user guide the review — they can restrict scope, set focus areas, add mandatory requirements, or provide background context. Their input directly controls which reviews run and what each reviewer prioritizes.
 
 ## Sequence of Instructions
 
-### 1. Check Config
-
-Read `context_collection.skip_manual_input_context` from the loaded config.
-
-If `skip_manual_input_context: true`:
-
-```
-⏭️  Manual context input skipped (skip_manual_input_context: true in config)
-```
-
-Set `manual_context: null`. Add `step-03-manual-context-input` to `stepsCompleted`. Load: `{nextStepFile}`
-
-**STOP — do not read further.**
-
----
-
-### 2. Show Collection Summary
+### 1. Show Collection Summary
 
 Print a brief summary of what was automatically collected so far:
 
 ```
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-💬 Auto-collection complete. Anything to add?
+✅ Auto-collection complete.
 
-📊 Collected so far:
-   🗂️  Files changed: {files_count}
-   🎯 Domains: {domains_list}
-   🧩 Stacks detected: {stacks_list or "none"}
-   📘 Primary docs: {primary_docs_found}
-   ⚙️  Config files: {config_files_found}
-   📚 Standards docs: {standards_docs_found}
-   💬 Inline annotations: {annotations_count}
-   🔌 External tools: {mcp_and_rag_summary or "none"}
+📊 Collected:
+   🗂️  Files changed:  {files_count}
+   🎯 Domains:         {domains_list}
+   🧩 Stacks:          {stacks_list or "none"}
+   📘 Primary docs:    {primary_docs_found}
+   ⚙️  Config files:   {config_files_found}
+   💬 Annotations:     {annotations_count}
+   🔌 External:        {mcp_and_rag_summary or "none"}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 3. Prompt User
+### 2. Prompt User
 
-Ask the user:
+Display EXACTLY:
 
 ```
-💬 Do you have any additional context for the reviewers?
+💬 Any instructions for this review?
+   Press Enter to run a full standard review, or type your instructions below.
 
-You can share:
-  • Business context or requirements behind this PR
-  • Known trade-offs or constraints you accepted
-  • Specific areas you'd like reviewers to focus on
-  • Known issues or technical debt to be aware of
-  • Links to related tickets, designs, or decisions
-
-Type your notes and press Enter, or type "skip" to continue without adding context.
+   You can specify:
+     • Scope        "only security" / "security and architecture" / "skip performance"
+     • Focus        "focus on SQL injection and rate limiting"
+     • Requirements "all API endpoints must have auth middleware"
+     • Context      "hotfix — ignore refactoring suggestions"
+     • Mix freely   "security only, focus on JWT handling, context: auth rewrite in progress"
 ```
 
-### 4. Capture Input
+**HALT — wait for user response before continuing.**
 
-Wait for the user's response.
+### 3. Parse Response
 
-- If the user enters empty input, `skip`, `s`, `done`, or `no` → set `manual_context: null`, announce skip
-- Otherwise → store the full text as `manual_context`
+**If user pressed Enter / left empty:**
+- Set `user_instructions.provided` = `false`
+- Set `user_instructions.review_scope` = `"all"`
+- Set all other fields to `null`
 
-### 5. Acknowledge
+**If user typed something**, parse the free-form text and extract:
 
-**If user provided context:**
+**`review_scope`** — which reviews to run:
+- Parse for scope signals: "only X", "just X", "X only", "skip X", "no X review", "X and Y"
+- Map to codes: `GR` (general), `SR` (security), `PR` (performance), `AR` (architecture), `BR` (business), `IC` (improve code)
+- Examples:
+  - "only security" → `[SR]`
+  - "security and architecture" → `[SR, AR]`
+  - "skip performance" → `[GR, SR, AR, BR]`
+  - "security, focus on JWT" → `[SR]` (scope signal found)
+  - "focus on SQL injection" (no scope signal) → `"all"` (focus only, all reviews still run)
+- If no scope restriction found → `"all"`
+
+**`focus_areas`** — specific things reviewers must prioritize (list of strings), or `null` if none mentioned.
+
+**`custom_requirements`** — mandatory checks user specified (list of strings), or `null`.
+
+**`context_notes`** — background info, trade-offs, constraints (list of strings), or `null`.
+
+**`raw`** — full original text from user.
+
+Set `user_instructions.provided` = `true`.
+
+### 4. Acknowledge
+
+**If user provided instructions**, print a confirmation of what was parsed:
+
 ```
-✅ Context noted — reviewers will treat this as ⚠️ high-priority input.
+✅ Instructions captured — driving all downstream review steps.
+
+   📋 Scope:         {scope_list joined with ", "  OR  "all reviews (standard)"}
+   🎯 Focus:         {focus_areas joined with ", "  OR  "standard coverage"}
+   ✅ Requirements:  {custom_requirements joined with ", "  OR  "none"}
+   📝 Context:       {context_notes joined with "; "  OR  "none"}
 ```
 
-**If user skipped:**
+**If user left empty:**
+
 ```
-⏩ Skipped — continuing with auto-collected context only.
+▶️  Full standard review — all reviewers, standard focus.
 ```
 
-### 6. Load Next Step
+### 5. Load Next Step
 
 Add `step-03-manual-context-input` to `stepsCompleted`. Load: `{nextStepFile}`

@@ -14,11 +14,11 @@ Load the PR context file and the actual code diff for analysis.
 
 ### 1. Load PR Context
 
-Read `{review_output}/current-pr-context.yaml`.
+Use `session_output`, `target_branch`, `base_branch`, `pr_number` from working context.
 
-If file not found:
+If not set:
 ```
-❌ No PR selected yet. Please run [SP] Select PR first.
+❌ No active session. Run [SS] Select Session to resume a past session, or [SP] Select PR to start a new one.
 ```
 Stop workflow.
 

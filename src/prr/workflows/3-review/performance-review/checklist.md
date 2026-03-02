@@ -20,5 +20,4 @@ validation-target: "Performance review output file"
 - [ ] ❓ QUESTION findings include: specific concern + context needed to assess severity (e.g., "Is this in a hot path?", "What is the expected data volume?")
 
 ## Output
-- [ ] Findings written to `{review_output}/performance-review-{date}.md`
-- [ ] PR context updated with `performance-review` in completed list
+- [ ] Findings written to `{session_output}/performance-review.md`

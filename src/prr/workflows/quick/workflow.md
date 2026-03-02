@@ -152,26 +152,78 @@ git -C {target_repo} diff {base_branch}...{target_branch}
 ```
 Store diff in memory. Count files changed, lines added/removed.
 
-### 1e. Save PR context
-Write `{review_output}/current-pr-context.yaml`:
-```yaml
-pr:
-  target_branch: "{target_branch}"
-  base_branch: "{base_branch}"
-  pr_number: "{pr_number}"
-  pr_title: "{pr_title}"
-  platform: "{active_platform}"
-  platform_repo: "{platform_repo}"
-  date: "{date}"
-review:
-  completed: []
-  findings: []
+### 1e. Create Session Folder
+
+Compute the session output folder:
+
+```
+sanitized_branch = target_branch
+  .toLowerCase()
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/^-+|-+$/g, '')
+  .substring(0, 40)
+
+if pr_number is set:
+  session_slug = "pr{pr_number}-{sanitized_branch}"
+else:
+  session_slug = "{sanitized_branch}"
+
+datetime_prefix = current datetime as "YYYY-MM-DD-HHmm"   (e.g. 2026-03-02-1430)
+
+session_output = "{review_output}/{datetime_prefix}-{session_slug}"
 ```
 
-Show summary:
+Examples:
+- `_prr-output/reviews/2026-03-02-1430-pr44-feature-auth-login`
+- `_prr-output/reviews/2026-03-02-1430-feature-auth-login`
+
+Create folder:
+```bash
+mkdir -p "{session_output}"
+```
+
+**Store in working context:** `session_output`, `target_branch`, `base_branch`, `pr_number`, `pr_title`, `active_platform`, `platform_repo`.
+
+### 1f. Generate Diffs Folder
+
+Parse the diff loaded in 1d and write per-file markdown files under `{session_output}/diffs/`, mirroring the repo folder tree.
+
+**For each changed file in the diff:**
+
+1. Determine file path, status, and line counts from the diff header.
+2. Construct output path: `{session_output}/diffs/{file_path}.md`
+3. Create parent directories:
+   ```bash
+   mkdir -p "{session_output}/diffs/{file_dir}"
+   ```
+4. Write the markdown file:
+
+```markdown
+# {file_path}
+**Status:** {modified|added|deleted|renamed} | **+{lines_added} / -{lines_removed} lines**
+---
+
+**Line {start_line}** *(or **Lines {start}–{end}** for multi-line hunks)*
+```diff
+- old line content
++ new line content
+```
+
+*(repeat for each hunk in this file)*
+```
+
+**Rules:**
+- **New file:** show all lines as `+` additions under a single hunk block.
+- **Deleted file:** show all lines as `-` deletions under a single hunk block.
+- **Renamed file with no content change:** write status line only, no diff blocks.
+- **Renamed file with changes:** write status `renamed` and include change hunks as normal.
+- One `.md` file per changed file. Folder structure mirrors the repo exactly.
+
+After writing all files, show summary:
 ```
 ✓ PR selected: {target_branch}
   Files changed: X | +Y / -Z lines
+✓ Diffs saved: {file_count} files → {session_output}/diffs/
 ```
 
 ---
@@ -202,12 +254,12 @@ Print to screen:
 ---
 
 ## PHASE 2.5 — COLLECT PR-SPECIFIC CONTEXT
-*Execute automatically. May pause once to ask the user for additional context (unless `skip_manual_input_context: true` in config).*
+*Execute automatically. Pauses once to ask the user for additional context — user must respond before continuing.*
 
 Execute the collect-pr-context workflow in full:
 `{project-root}/_prr/prr/workflows/2-analyze/collect-pr-context/workflow.md`
 
-This workflow analyzes changed files, detects technology stacks, collects relevant context from all sources (primary docs, config files, standards docs, inline annotations, stack-specific rules, external MCP/RAG tools), asks the user for any additional context (marked ⚠️ IMPORTANT if provided), and builds a structured PR-specific knowledge base at `{review_output}/pr-{pr_number}-context.yaml`.
+This workflow analyzes changed files, detects technology stacks, collects relevant context from all sources (primary docs, config files, standards docs, inline annotations, stack-specific rules, external MCP/RAG tools), asks the user for any additional context (marked ⚠️ IMPORTANT if provided), and builds a structured PR-specific knowledge base at `{session_output}/pr-context.yaml`.
 
 On completion, store `pr_knowledge_base` = path to the generated context file.
 
@@ -217,7 +269,7 @@ On completion, store `pr_knowledge_base` = path to the generated context file.
 *Execute all review types automatically, one by one.*
 
 **Before each review, set these variables so the review instructions resolve correctly:**
-- `pr_context` = `{review_output}/current-pr-context.yaml`
+- `pr_context` = working context (`target_branch`, `base_branch`, `pr_number`, `pr_knowledge_base`)
 - `target_branch` = `pr_context.pr.target_branch`
 - `base_branch` = `pr_context.pr.base_branch`
 - `pr_number` = `pr_context.pr.pr_number`
@@ -225,36 +277,44 @@ On completion, store `pr_knowledge_base` = path to the generated context file.
 - `target_repo`, `communication_language` = from config
 - `output_file` = per-review path defined below *(ensures findings are saved to disk for [RR] and [PC] later)*
 
+**Scope gate:** Read `user_instructions.review_scope` from `{pr_knowledge_base}`.
+- If `"all"` (or knowledge base missing) → run all reviews 3a–3e normally.
+- If a list (e.g. `[SR, AR]`) → only run reviews whose code is in the list. For each skipped review, print:
+  `⏭️ {Review Name} skipped (not in scope)`
+  and do NOT write its output file.
+
+Review codes: `GR` = General · `SR` = Security · `PR` = Performance · `AR` = Architecture · `BR` = Business
+
 ### 3a. General Review
-Set `output_file` = `{review_output}/general-review-{date}.md`
+Set `output_file` = `{session_output}/general-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/general-review/instructions.xml`
 
 Collect findings as `{general_findings}`.
 Print section header: `## 👁️ General Review`
 
 ### 3b. Security Review
-Set `output_file` = `{review_output}/security-review-{date}.md`
+Set `output_file` = `{session_output}/security-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/security-review/instructions.xml`
 
 Collect findings as `{security_findings}`.
 Print section header: `## 🔒 Security Review`
 
 ### 3c. Performance Review
-Set `output_file` = `{review_output}/performance-review-{date}.md`
+Set `output_file` = `{session_output}/performance-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/performance-review/instructions.xml`
 
 Collect findings as `{performance_findings}`.
 Print section header: `## ⚡ Performance Review`
 
 ### 3d. Architecture Review
-Set `output_file` = `{review_output}/architecture-review-{date}.md`
+Set `output_file` = `{session_output}/architecture-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/architecture-review/instructions.xml`
 
 Collect findings as `{architecture_findings}`.
 Print section header: `## 🏗️ Architecture Review`
 
 ### 3e. Business Review
-Set `output_file` = `{review_output}/business-review-{date}.md`
+Set `output_file` = `{session_output}/business-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/business-review/instructions.xml`
 
 Collect findings as `{business_findings}`.
@@ -276,10 +336,7 @@ Count totals:
 - `{warning_count}` = number of 🟡 findings
 - `{suggestion_count}` = number of 🟢 findings
 
-Generate report filename: `review-{target_branch_slug}-{date}.md`
-where `{target_branch_slug}` = branch name with `/` replaced by `-`.
-
-Write report to: `{review_output}/review-{target_branch_slug}-{date}.md`
+Write report to: `{session_output}/final-review.md`
 
 Report format:
 ```markdown
@@ -328,7 +385,8 @@ Print completion summary:
 ✅ Quick Review Complete
 
 Branch:  {target_branch}
-Report:  {review_output}/review-{target_branch_slug}-{date}.md
+Session: {session_output}/
+Report:  {session_output}/final-review.md
 
 🔴 Blockers:    {blocker_count}
 🟡 Warnings:    {warning_count}

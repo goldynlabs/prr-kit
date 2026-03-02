@@ -1,7 +1,7 @@
 ---
 name: "step-03-write"
 description: "Write the final review report to file"
-outputFile: "{review_output}/review-{target_branch_slug}-{date}.md"
+outputFile: "{session_output}/final-review.md"
 templateFile: "../templates/review-report.template.md"
 ---
 
@@ -27,7 +27,7 @@ The report includes:
 ```
 ✅ Review Report Generated!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-📄 File: {review_output}/review-{target_branch_slug}-{date}.md
+📄 File: {session_output}/final-review.md
 
 Summary:
   🔴 Blockers: {blocker_count}

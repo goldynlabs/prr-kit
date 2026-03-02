@@ -32,15 +32,19 @@ pr_metadata:
   files_changed: {n}
   collected_at: {ISO timestamp}
 
-# ⚠️  IMPORTANT — Human-provided context from the PR author.
+# ⚠️  IMPORTANT — Human-provided instructions from the user.
 # All reviewers MUST read this section before starting any review.
-# Align all findings and focus areas against this input.
-manual_context:
+# review_scope controls which reviews run. focus_areas, custom_requirements, and context_notes
+# are highest-priority guidance — align all findings against them.
+user_instructions:
   # Populated only when the user provided input in step-03-manual-context-input.
   # If provided: true — treat this content as the highest-priority context in this file.
   provided: {true|false}
-  content: |
-    {manual_context text, or null if not provided}
+  review_scope: {"all" | [SR] | [SR, AR] | ...}   # "all" = run all reviews; list = only those codes
+  focus_areas: {list of strings, or null}           # specific things every reviewer must prioritize
+  custom_requirements: {list of strings, or null}   # mandatory checks the user specified
+  context_notes: {list of strings, or null}         # background info, trade-offs, constraints
+  raw: {original text from user, or null}           # verbatim input
 
 files_analysis:
   changed_files:
@@ -245,7 +249,7 @@ external_context:
 
 review_priorities:
   # Guide reviewers on what to focus on
-  # ⚠️  If manual_context.provided is true — reviewers MUST check findings against it first.
+  # ⚠️  If user_instructions.provided is true — reviewers MUST check findings against user_instructions first.
   critical:
     - "Verify no v-html with user input (security requirement)"
     - "Check ESLint error-level rules compliance"
@@ -261,7 +265,10 @@ review_priorities:
     - "Optional optimizations"
 
 reviewer_guidance:
-  # ⚠️  If manual_context.provided is true — read manual_context BEFORE starting any review.
+  # ⚠️  If user_instructions.provided is true:
+  #     PREPEND each reviewer's list with user_instructions.focus_areas (if any)
+  #     APPEND each reviewer's list with user_instructions.custom_requirements prefixed "MANDATORY: "
+  #     Example: if focus_areas = ["JWT handling"], add "FOCUS: JWT handling" as first item
   general_review:
     - "Check for ESLint rule violations (no-var, prefer-const)"
     - "Verify component naming follows standards"
@@ -287,29 +294,21 @@ context_sources:
   config_files: [.eslintrc.js, .prettierrc]
   standards_docs: [CONTRIBUTING.md, ARCHITECTURE.md]
   inline_annotations: yes
-  manual_context: {true|false}    # true if user provided input in step-03
+  user_instructions: {true|false}  # true if user provided input in step-03
   mcp_tools: []                   # list of MCP tools actually used
   rag_systems: []                 # list of RAG systems queried
   url_sources: []                 # list of plain URLs fetched
 ```
 
-### 3. Determine Output Filename
+### 3. Output Filename
 
-```javascript
-if (pr_number_available) {
-  filename = `pr-${pr_number}-context.yaml`
-} else {
-  // Use sanitized branch name
-  const safeBranchName = branch_name.replace(/[^a-zA-Z0-9-]/g, '-')
-  filename = `pr-${safeBranchName}-context.yaml`
-}
-```
+Always: `pr-context.yaml` — the session folder already identifies the PR uniquely.
 
 ### 4. Write Knowledge Base to File
 
-Write to: `{review_output}/{filename}`
+Write to: `{session_output}/pr-context.yaml`
 
-Example: `_prr-output/pr-123-context.yaml`
+Example: `_prr-output/reviews/2026-03-02-1430-pr123-feature-auth/pr-context.yaml`
 
 ### 5. Report Completion
 
@@ -322,9 +321,9 @@ Example: `_prr-output/pr-123-context.yaml`
    • ESLint rules: {n}
    • Guidelines: {m}
    • Inline annotations: {k}
-   • Manual context: ⚠️ YES — reviewers will prioritize this ({char_count} chars)
+   • User instructions: ⚠️ YES — scope: {scope}, focus: {focus_count} areas, requirements: {req_count}
      OR
-   • Manual context: none
+   • User instructions: none — full standard review
    • MCP tools used: {mcp_list or "none"}
    • RAG patterns: {rag_count}
    • Issue context: {issue_key or "none"}
@@ -337,16 +336,11 @@ Example: `_prr-output/pr-123-context.yaml`
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 6. Store Context Path
+### 6. Store Knowledge Base Path in Working Context
 
-Update PR context file to include knowledge base path:
+Store `pr_knowledge_base` = `{session_output}/pr-context.yaml` in working context.
 
-```yaml
-# {review_output}/current-pr-context.yaml
-pr_knowledge_base: "{review_output}/{filename}"
-```
-
-This allows review workflows to find the knowledge base.
+Review workflows (GR, SR, PR, AR, BR) find the knowledge base via working context or directly at `{session_output}/pr-context.yaml`.
 
 ### 7. Workflow Complete
 

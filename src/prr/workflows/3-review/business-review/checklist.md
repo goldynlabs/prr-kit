@@ -23,5 +23,4 @@ validation-target: "Business review output file"
 - [ ] Post-ship monitoring noted: what to watch after deploy
 
 ## Output
-- [ ] Findings written to `{review_output}/business-review-{date}.md`
-- [ ] PR context updated with `business-review` in completed list
+- [ ] Findings written to `{session_output}/business-review.md`

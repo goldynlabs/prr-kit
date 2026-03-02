@@ -22,5 +22,4 @@ validation-target: "Security review output file"
 - [ ] ❓ QUESTION findings include: specific concern + exact question to ask author (e.g., "Was this auth check intentionally removed?")
 
 ## Output
-- [ ] Findings written to `{review_output}/security-review-{date}.md`
-- [ ] PR context updated with `security-review` in completed list
+- [ ] Findings written to `{session_output}/security-review.md`

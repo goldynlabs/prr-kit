@@ -20,8 +20,8 @@ nextStep: "./steps/step-01-load-context.md"
 ## INITIALIZATION
 
 Load config from `{main_config}`.
-Load PR context from `{review_output}/current-pr-context.yaml`.
-If context file does not exist, instruct user to run [SP] Select PR first.
+Use `session_output`, `target_branch`, `base_branch`, `pr_number` from working context.
+If not set: prompt user to run [SS] Select Session (to resume a past session) or [SP] Select PR (to start a new one).
 
 ## EXECUTION
 

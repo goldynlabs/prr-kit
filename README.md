@@ -38,9 +38,137 @@ Then open your IDE in the installed project and use one of these commands to sta
 
 ## How It Works
 
-<p align="center">
-  <img src="docs/assets/how-it-works.svg" alt="How It Works" width="100%"/>
-</p>
+```
+┌─────────────────────────────────────────────────────────┐
+│                    /prr-quick                           │
+│              Load config.yaml                           │
+└───────────────────────┬─────────────────────────────────┘
+                        │
+        ╔═══════════════▼════════════════╗
+        ║       PHASE 1 — SELECT PR      ║
+        ╚═══════════════╤════════════════╝
+                        │
+             ┌──────────▼──────────┐
+             │ 1a. git fetch origin │
+             └──────────┬──────────┘
+                        │
+             ┌──────────▼───────────────┐
+             │ 1b. List open PRs/MRs    │
+             │     + recent branches    │
+             └──────────┬───────────────┘
+                        │
+             ┌──────────▼───────────────┐
+             │ 1c. ⌨️  Select PR/branch  │  ← USER INPUT
+             │     Enter PR# or name    │
+             └──────────┬───────────────┘
+                        │
+             ┌──────────▼──────────┐
+             │ 1d. Load diff        │
+             │     count files/lines│
+             └──────────┬──────────┘
+                        │
+             ┌──────────▼──────────────────────────┐
+             │ 1e. Create session folder            │
+             │     {output}/{date}-{slug}/          │
+             └──────────┬──────────────────────────┘
+                        │
+             ┌──────────▼──────────────────────────┐
+             │ 1f. Generate diffs/ folder           │
+             │     one .md per changed file         │
+             └──────────┬──────────────────────────┘
+                        │
+        ╔═══════════════▼════════════════╗
+        ║      PHASE 2 — DESCRIBE PR     ║
+        ╚═══════════════╤════════════════╝
+                        │
+             ┌──────────▼──────────────┐
+             │ 2a. Classify PR type     │
+             │     bugfix/feature/...   │
+             └──────────┬──────────────┘
+                        │
+             ┌──────────▼──────────────┐
+             │ 2b. File-by-file         │
+             │     walkthrough          │
+             └──────────┬──────────────┘
+                        │
+             ┌──────────▼──────────────┐
+             │ 2c. Print PR description │
+             └──────────┬──────────────┘
+                        │
+        ╔═══════════════▼═══════════════════════╗
+        ║   PHASE 2.5 — COLLECT PR CONTEXT      ║
+        ╚═══════════════╤═══════════════════════╝
+                        │
+             ┌──────────▼──────────────────────────┐
+             │ Step 1. Analyze changed files        │
+             │  detect stacks, domains, file types  │
+             └──────────┬──────────────────────────┘
+                        │
+             ┌──────────▼──────────────────────────┐
+             │ Step 2. Collect context from:        │
+             │  CLAUDE.md · CONTRIBUTING.md         │
+             │  .eslintrc · tsconfig · pyproject    │
+             │  ARCHITECTURE.md · docs/**           │
+             │  @context/@security annotations      │
+             │  stack rules (vue3/react/django/...)  │
+             │  MCP tools · RAG · URL sources       │
+             └──────────┬──────────────────────────┘
+                        │
+             ┌──────────▼──────────────────────────┐
+             │ Step 3. ⌨️  User instructions        │  ← USER INPUT
+             │  scope / focus / requirements /      │
+             │  context — or Enter for full review  │
+             └──────────┬──────────────────────────┘
+                        │
+               ┌────────┴────────┐
+               ▼                 ▼
+          [provided]         [empty]
+        parse scope &      scope = "all"
+        focus/req/ctx      full standard
+               │                 │
+               └────────┬────────┘
+                        │
+             ┌──────────▼──────────────────────────┐
+             │ Step 4. Build pr-context.yaml        │
+             │  all collected context + user_instr  │
+             │  → {session_output}/pr-context.yaml  │
+             └──────────┬──────────────────────────┘
+                        │
+        ╔═══════════════▼════════════════╗
+        ║       PHASE 3 — REVIEW         ║
+        ╚═══════════════╤════════════════╝
+                        │
+             ┌──────────▼──────────────────────────┐
+             │ Scope gate                           │
+             │ read user_instructions.review_scope  │
+             └──────┬───────────────────────────────┘
+                    │
+         ┌──────────┴──────────┐
+    [in scope]           [not in scope]
+         │                     │
+         ▼                     ▼
+  ┌─────────────┐        ⏭️ skipped
+  │  GR · SR    │        (no output file)
+  │  PR · AR    │
+  │     BR      │
+  └──────┬──────┘
+         │
+        ╔▼════════════════════════╗
+        ║  PHASE 4 — REPORT       ║
+        ╚╤════════════════════════╝
+         │
+         │  Compile findings → sort by severity
+         │  🔴 Blockers → 🟡 Warnings
+         │  🟢 Suggestions → ❓ Questions
+         │  Write → final-review.md
+         │
+        ╔▼════════════════════════╗
+        ║  PHASE 5 — DONE         ║
+        ╚╤════════════════════════╝
+         │
+         ├── auto_post_comment: true  → post inline comments automatically
+         └── auto_post_comment: false → ⌨️  type PC to post, Enter to finish
+```
 
 The framework installs into your project as a `_prr/` folder. Agents and workflows are Markdown/YAML files that your AI IDE reads and executes — no server, no background process, no API keys required beyond your IDE's AI.
 
@@ -71,9 +199,6 @@ auto_post_comment: false               # true → auto-post findings after every
 # ─── Context Collection ────────────────────────────────────────────────────
 context_collection:
   enabled: true                        # false → disable context collection entirely
-  skip_manual_input_context: false     # true → skip the manual context input prompt
-                                       # false (default) → agent asks user for additional context
-                                       # before building the knowledge base; input is marked ⚠️ IMPORTANT
   mode: pr-specific                    # only value: pr-specific (always fresh, never cached)
 
   # Sources below are auto-detected — override only if needed:
@@ -139,11 +264,11 @@ external_sources:
 ### Quick mode — one command, full pipeline
 
 ```
-/prr-quick    or    /prr-master → QR
+/prr-quick
 ```
 
-Runs automatically: **select PR → describe → collect context → 5 reviews → generate report**
-Only pauses once to ask which PR/branch to review.
+Runs automatically: **select PR → describe → collect context → review → report**
+Pauses **twice** for user input: once to select the PR/branch, once for review instructions (scope, focus, requirements — or Enter for a full standard review).
 
 ### Manual mode — step by step
 
@@ -218,13 +343,14 @@ All findings use a standard format:
 
 ## Context Collection
 
-After [DP] Describe PR, context is collected **automatically** — no manual step needed:
+After [DP] Describe PR, context is collected **automatically** — then the agent pauses once for your instructions:
 
 1. Analyzes changed files to detect domains (`authentication`, `state-management`, etc.)
 2. Reads relevant config files (`.eslintrc`, `.prettierrc`, `tsconfig.json`) and standards docs (`CONTRIBUTING.md`, `ARCHITECTURE.md`)
 3. Extracts inline `@context:` / `@security:` / `@pattern:` annotations from the diff
 4. Optionally queries **MCP tools** (Confluence, Jira, Figma) and **RAG systems** if configured
-5. Writes `pr-{branch}-context.yaml` — loaded by all reviewers
+5. Asks for **review instructions** — scope (`only security`), focus, requirements, or context. Press Enter for a full standard review
+6. Writes `pr-context.yaml` inside the session folder — loaded by all reviewers
 
 > See [CONFIGURATION.md](CONFIGURATION.md) for MCP intents, RAG setup, and URL sources.
 

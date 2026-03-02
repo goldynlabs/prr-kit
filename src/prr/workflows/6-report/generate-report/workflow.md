@@ -19,7 +19,8 @@ nextStep: "./steps/step-01-collect.md"
 ## INITIALIZATION
 
 Load config from `{main_config}`.
-Load PR context from `{review_output}/current-pr-context.yaml`.
+Use `session_output` from working context.
+If not set: prompt user to run [SS] Select Session or [SP] Select PR first.
 
 ## EXECUTION
 

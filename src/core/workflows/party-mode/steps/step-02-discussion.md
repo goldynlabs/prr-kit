@@ -7,13 +7,15 @@ description: "Run the multi-reviewer discussion and compile unified findings"
 
 ## Sequence of Instructions
 
+> **Active reviewers only.** Read the active reviewer list from step 1 (determined by `user_instructions.review_scope`). Skip any reviewer section below whose code is not in the active list. Only active reviewers speak and produce findings.
+
 ### 1. Round 1 — Each Reviewer's Initial Take
 
 Go through the diff once per reviewer. Each reviewer applies rules from the PR knowledge base loaded in step 1 in addition to their domain expertise.
 
 ---
 
-**👁️ Alex says:**
+**👁️ Alex says:** *(skip if GR not in scope)*
 
 [Alex reviews for: logic correctness, naming, readability, DRY violations, missing error handling, test coverage, side effects, resource cleanup, and stack-specific code quality issues from knowledge base]
 
@@ -25,7 +27,7 @@ Format each finding as:
 
 ---
 
-**🔒 Sam says:**
+**🔒 Sam says:** *(skip if SR not in scope)*
 
 [Sam reviews for: secrets/credentials, SQL injection, XSS, authentication checks, authorization, rate limiting, error message exposure, OWASP Top 10, and stack-specific security threats from knowledge base]
 
@@ -38,7 +40,7 @@ Format each finding as:
 
 ---
 
-**⚡ Petra says:**
+**⚡ Petra says:** *(skip if PR not in scope)*
 
 [Petra reviews for: N+1 queries, missing indexes, sync I/O on hot paths, unbound queries, missing caching, large payloads, memory leaks, inefficient loops, and stack-specific performance issues from knowledge base]
 
@@ -51,7 +53,7 @@ Format each finding as:
 
 ---
 
-**🏗️ Arch says:**
+**🏗️ Arch says:** *(skip if AR not in scope)*
 
 [Arch reviews for: layer violations, circular dependencies, tight coupling, inconsistent patterns, shared module blast radius, backward compatibility breaks, and stack-specific architecture concerns from knowledge base]
 
@@ -66,7 +68,7 @@ Format each finding as:
 
 ### 2. Round 2 — Biz Translates + Cross-Review Discussion
 
-**💼 Biz speaks last** — synthesizes findings from Alex/Sam/Petra/Arch into business impact:
+**💼 Biz speaks last** *(skip if BR not in scope)* — synthesizes findings from Alex/Sam/Petra/Arch into business impact:
 
 [Biz reviews for: user-facing regressions, feature completeness, data safety, deployment risk, observability gaps, compliance issues, and project-specific business concerns from knowledge base]
 
@@ -103,7 +105,7 @@ After discussion, produce a unified finding list, deduplicated and prioritized:
 ## 🎉 Party Mode — Unified Findings
 
 **PR:** {target_branch} → {base_branch}
-**Session participants:** Alex 👁️ + Sam 🔒 + Petra ⚡ + Arch 🏗️ + Biz 💼
+**Session participants:** {active reviewers from step 1}
 
 ### 🔴 Blockers ({count})
 [all blockers from all reviewers, attributed to reviewer]

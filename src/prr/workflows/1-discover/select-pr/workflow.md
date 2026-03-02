@@ -23,7 +23,7 @@ This uses **step-file architecture** with sequential orchestration:
 - 🛑 NEVER start reviewing without completing this workflow first
 - 📖 Read entire step file before executing
 - ⏸️ ALWAYS halt at user selection points — never auto-select
-- 💾 Write PR context to `{review_output}/current-pr-context.yaml` after confirmation
+- 💾 Create session folder `{session_output}` and store PR metadata in working context after confirmation (step 5)
 
 ## INITIALIZATION
 

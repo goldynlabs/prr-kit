@@ -82,10 +82,14 @@ agent:
       exec: "{project-root}/_prr/prr/workflows/6-report/post-comments/workflow.md"
       description: "[PC] Post Comments: Post inline review comments to GitHub/GitLab/Azure/Bitbucket PR"
 
+    - trigger: "SS or fuzzy match on select-session or resume-session"
+      exec: "{project-root}/_prr/core/tasks/select-session.md"
+      description: "[SS] Select Session: List past review sessions and resume one"
+
     - trigger: "HH or fuzzy match on help"
       exec: "{project-root}/_prr/core/tasks/help.md"
       description: "[HH] Help: Show review workflow guide and available commands"
 
     - trigger: "CL or fuzzy match on clear or clean or reset"
       exec: "{project-root}/_prr/core/tasks/clear.md"
-      description: "[CL] Clear: Remove context files and/or review reports from output folder"
+      description: "[CL] Clear: Delete one or more past review sessions"

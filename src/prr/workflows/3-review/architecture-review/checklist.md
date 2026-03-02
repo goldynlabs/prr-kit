@@ -22,5 +22,4 @@ validation-target: "Architecture review output file"
 - [ ] ❓ QUESTION findings include: specific question + list of potentially affected files outside the diff
 
 ## Output
-- [ ] Findings written to `{review_output}/architecture-review-{date}.md`
-- [ ] PR context updated with `architecture-review` in completed list
+- [ ] Findings written to `{session_output}/architecture-review.md`

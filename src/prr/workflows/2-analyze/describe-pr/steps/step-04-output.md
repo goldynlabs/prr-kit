@@ -1,7 +1,7 @@
 ---
 name: "step-04-output"
 description: "Write PR description to file and display summary"
-outputFile: "{review_output}/pr-description-{date}.md"
+outputFile: "{session_output}/pr-description.md"
 templateFile: "../templates/pr-description.template.md"
 ---
 
@@ -24,14 +24,13 @@ Using the template at `{templateFile}`, generate the PR description with:
 
 ### 2. Write to File
 
-Write to `{outputFile}` (replace {date} with actual date: YYYY-MM-DD).
+Write to `{outputFile}`.
 
-### 3. Update PR Context
+### 3. Update Working Context
 
-Update `{review_output}/current-pr-context.yaml`:
-- Add `description_generated: true`
-- Add `pr_type: "{classified_type}"`
-- Add `risk_level: "{risk_level}"`
+Store in working context:
+- `pr_type` = `{classified_type}`
+- `risk_level` = `{risk_level}`
 
 ### 4. Display Summary
 

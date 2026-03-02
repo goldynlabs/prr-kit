@@ -13,6 +13,5 @@ validation-target: "Improve code output file"
 - [ ] Suggestions are correct — the AFTER code actually works
 
 ## Output
-- [ ] All suggestions written to `{review_output}/improve-code-{date}.md`
+- [ ] All suggestions written to `{session_output}/improve-code.md`
 - [ ] Suggestions grouped by category (Bugs | Quality | Performance | Best Practices)
-- [ ] PR context updated with `improve-code` in completed list

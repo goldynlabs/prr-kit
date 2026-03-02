@@ -8,35 +8,43 @@ nextStepFile: "./step-02-discussion.md"
 
 ## Sequence of Instructions
 
-### 1. Introduce Party Mode
+### 1. Load PR Knowledge Base
 
-Display:
+Load the PR knowledge base from working context (`pr_knowledge_base`), or read directly at `{session_output}/pr-context.yaml`.
+It contains stack-specific rules, ESLint/linting rules, project guidelines (CLAUDE.md, CONTRIBUTING.md, ARCHITECTURE.md sections), inline code annotations, and external context.
+
+If no knowledge base exists (DP was not run), proceed with local context only — do not block.
+
+**Read `user_instructions.review_scope`** from the knowledge base:
+- If `"all"` (or knowledge base missing) → all 5 reviewers are active.
+- If a list (e.g. `[SR, AR]`) → only activate reviewers matching those codes:
+  `GR` = Alex · `SR` = Sam · `PR` = Petra · `AR` = Arch · `BR` = Biz
+
+### 2. Introduce Party Mode
+
+Display, listing only the **active** reviewers:
 ```
 🎉 Party Mode activated!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Reviewers joining this session:
 
-  👁️  Alex     — General Code Quality
+  {active reviewers only, e.g.:}
   🔒  Sam      — Security
-  ⚡  Petra    — Performance
   🏗️  Arch     — Architecture
-  💼  Biz      — Business Impact
 
 PR: {target_branch} → {base_branch}
 Files changed: {file_count} | Lines: +{additions} -{deletions}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ```
 
-### 2. Load PR Knowledge Base
-
-Read `{review_output}/current-pr-context.yaml` to get `pr_knowledge_base` path.
-Load the knowledge base file — it contains stack-specific rules, ESLint/linting rules, project guidelines (CLAUDE.md, CONTRIBUTING.md, ARCHITECTURE.md sections), inline code annotations, and external context.
-
-If no knowledge base exists (DP was not run), proceed with local context only — do not block.
+If reviewers were filtered, also print:
+```
+⏭️  Skipped: {inactive reviewer names} (not in review scope)
+```
 
 ### 3. Load Reviewer Personas
 
-Internally adopt all reviewer personas simultaneously. All reviewers apply rules from the PR knowledge base in their respective areas.
+Internally adopt only the **active** reviewer personas (determined by scope in step 1). All active reviewers apply rules from the PR knowledge base in their respective areas.
 
 **👁️ Alex (General Reviewer)**
 - Focus: code logic, naming, readability, DRY, best practices, test coverage, side effects, and stack-specific best practices from knowledge base
@@ -64,7 +72,7 @@ Internally adopt all reviewer personas simultaneously. All reviewers apply rules
 - Runs last, references findings from Alex/Sam/Petra/Arch and translates them to business consequences
 - Output format: risk level (CRITICAL/HIGH/MEDIUM/LOW) + user impact + deployment recommendation
 
-### 4. Scan the Diff and Assign Focus Areas
+### 4. Scan the Diff and Assign Focus Areas (active reviewers only)
 
 Read the diff and file list from the knowledge base. Assign focus areas:
 - SQL/DB files → Petra leads (N+1, missing index), Sam checks (injection)
@@ -74,6 +82,6 @@ Read the diff and file list from the knowledge base. Assign focus areas:
 - Any file touching auth, payments, PII → Sam mandatory
 - Schema/migration files → Biz flags (data safety, rollback plan)
 
-### 4. Load Next Step
+### 5. Load Next Step
 
 Add `step-01-load-reviewers` to `stepsCompleted`. Load: `{nextStepFile}`

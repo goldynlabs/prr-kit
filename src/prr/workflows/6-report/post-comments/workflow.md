@@ -37,10 +37,11 @@ Depends on `{active_platform}`:
 ## INITIALIZATION
 
 Load config from `{main_config}`.
-Load PR context from `{review_output}/current-pr-context.yaml`.
+Use `session_output`, `target_branch`, `base_branch`, `pr_number`, `active_platform` from working context.
+If `session_output` not set: prompt user to run [SS] Select Session or [SP] Select PR first.
 Use `{active_platform}` (or detect from `{platform}` config).
 
-Set `{temp_dir}` = `{review_output}/temp`.
+Set `{temp_dir}` = `{session_output}/temp`.
 Create it if it doesn't exist:
 ```bash
 mkdir -p "{temp_dir}"

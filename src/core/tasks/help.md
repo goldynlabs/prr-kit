@@ -36,4 +36,5 @@ Use `/prr-help` anytime for guidance on what to do.
 
 ### Utilities
 
-- **[CL] Clear** — Remove context files and/or review reports from output folder. Useful when starting fresh or cleaning up after a session. Choose: All / Context only / Reports only.
+- **[SS] Select Session** — List past review sessions and resume one. Use this at the start of a new conversation to pick up where you left off.
+- **[CL] Clear** — Delete one or more past review session folders. Choose specific sessions or clear all.
