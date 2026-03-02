@@ -16,6 +16,10 @@ Module system, agent YAML, step-file workflows, CLI installer with full IDE inte
 
 **[🌐 Website](https://prrkit.sitenow.cloud)** **[📖 Full Documentation](https://prrkit.sitenow.cloud/docs)**
 
+<a href="https://unikorn.vn/p/prr-kit?ref=embed" target="_blank"><img src="https://unikorn.vn/api/widgets/badge/prr-kit?theme=light" alt="PR Review Kit trên Unikorn.vn" style="width: 256px; height: 64px;" width="256" height="64" /></a>
+<a href="https://unikorn.vn/p/prr-kit?ref=embed" target="_blank"><img src="https://unikorn.vn/api/widgets/badge/prr-kit/rank?theme=light&type=daily" alt="PR Review Kit - Hàng ngày" style="width: 250px; height: 64px;" width="250" height="64" /></a>
+
+
 ## Quick Start
 
 ```bash
