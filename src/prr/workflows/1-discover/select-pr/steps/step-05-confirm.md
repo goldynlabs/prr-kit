@@ -43,7 +43,10 @@ Create the folder:
 mkdir -p "{session_output}"
 ```
 
-**Store `session_output` in working context** — all subsequent workflows in this session will use it.
+**Store in working context** — all subsequent workflows in this session will use these values:
+- `session_output` = computed above
+- `target_branch` = `selected_branch`   ← canonical name used by all downstream workflows
+- `base_branch`, `diff_range`, `pr_number`, `pr_title`, `pr_author`, `pr_body`, `pr_head_sha`, `active_platform`, `platform_repo` = from step 3
 
 ### 0b. Generate Diffs Folder
 

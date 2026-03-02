@@ -124,7 +124,7 @@ const steps = [
 
     // Slash command IDEs
     'claude-code':    { code: '/prr-quick', copyable: true,  desc: 'One command runs the full pipeline: select PR, review, report.', note: null },
-    'cursor':         { code: '/prr-quick', copyable: true,  desc: 'One command runs the full pipeline: select PR, review, report.', note: null },
+    'cursor':         { code: '/prr-quick', copyable: true,  desc: 'One command runs the full pipeline: select PR, review, report.', note: 'Requires Cursor 1.6+. Type /prr-quick in Agent mode — not in regular Chat.' },
     'auggie':         { code: '/prr-quick', copyable: true,  desc: 'One command runs the full pipeline: select PR, review, report.', note: null },
     'crush':          { code: '/prr-quick', copyable: true,  desc: 'One command runs the full pipeline: select PR, review, report.', note: null },
     'iflow':          { code: '/prr-quick', copyable: true,  desc: 'One command runs the full pipeline: select PR, review, report.', note: null },
@@ -135,28 +135,28 @@ const steps = [
 
     // Workflow panel IDEs
     'windsurf': {
-      code: '# Workflows panel → prr-quick',
-      copyable: false,
-      desc: 'Open the Workflows panel in Windsurf and select prr-quick.',
-      note: 'Windsurf uses the Workflows panel instead of slash commands. Workflows are installed to .windsurf/workflows/.',
+      code: '/prr-quick',
+      copyable: true,
+      desc: 'Type /prr-quick in Cascade chat, or open the Workflows panel and select prr-quick.',
+      note: 'Windsurf workflows support both /slash commands in Cascade and the Workflows panel. Workflows are installed to .windsurf/workflows/.',
     },
     'cline': {
-      code: '# Workflows panel → prr-quick',
-      copyable: false,
-      desc: 'Open the workflow runner in Cline and select prr-quick.',
-      note: 'Cline triggers workflows from .clinerules/workflows/, not slash commands.',
+      code: '/prr-quick.md',
+      copyable: true,
+      desc: 'Type /prr-quick.md in Cline chat to run the full review pipeline.',
+      note: 'Cline slash commands require the .md extension. Workflows are installed to .clinerules/workflows/.',
     },
     'rovo-dev': {
       code: '# Workflows panel → prr-quick',
       copyable: false,
       desc: 'Open the Workflows panel in Rovo Dev and select prr-quick.',
-      note: 'Rovo Dev uses workflow files in .rovodev/workflows/ instead of slash commands.',
+      note: 'Rovo Dev workflow files are installed to .rovodev/workflows/.',
     },
     'trae': {
-      code: '# Workflows panel → prr-quick',
+      code: '# Rules auto-apply',
       copyable: false,
-      desc: 'Open the workflow runner in Trae and select prr-quick.',
-      note: 'Trae uses workflow files in .trae/rules/ instead of slash commands.',
+      desc: 'Trae rules installed to .trae/rules/ apply automatically to every AI response — no explicit command needed.',
+      note: 'Open Trae in your project after installing prr-kit. The PRR review instructions will be active in every AI conversation in that workspace.',
     },
     'antigravity': {
       code: '# Workflows panel → prr-quick',
@@ -168,7 +168,7 @@ const steps = [
       code: '# Commands panel → prr-quick',
       copyable: false,
       desc: 'Open the Commands panel in OpenCode and select prr-quick.',
-      note: 'OpenCode uses command files in .opencode/command/ instead of slash commands.',
+      note: 'OpenCode uses command files in .opencode/commands/ and agent files in .opencode/agents/ instead of slash commands.',
     },
 
     // GitHub Copilot
@@ -189,10 +189,10 @@ const steps = [
 
     // Kiro
     'kiro': {
-      code: '@_prr/core/agents/prr-master.md',
+      code: '#prr-quick',
       copyable: true,
-      desc: 'Reference the master agent in Kiro chat to open the full review menu.',
-      note: 'Kiro uses @-mentioned steering files from .kiro/steering/ instead of slash commands.',
+      desc: 'Type #prr-quick in Kiro chat to run the full review pipeline. Use #prr-master for the full menu.',
+      note: 'Kiro uses # to reference steering files from .kiro/steering/ instead of slash commands.',
     },
   };
 
@@ -206,11 +206,11 @@ const steps = [
 
   const IDE_DISPLAY_NAMES: Record<string, string> = {
     'claude-code': 'Claude Code', 'cursor': 'Cursor', 'windsurf': 'Windsurf',
-    'antigravity': 'Antigravity', 'auggie': 'Auggie', 'cline': 'Cline',
+    'antigravity': 'Antigravity', 'auggie': 'Augment Code', 'cline': 'Cline',
     'codex': 'Codex', 'crush': 'Crush', 'gemini': 'Gemini CLI',
     'github-copilot': 'GitHub Copilot', 'iflow': 'iFlow', 'kilo': 'KiloCoder',
     'kiro': 'Kiro', 'opencode': 'OpenCode', 'qwen': 'QwenCoder',
-    'roo': 'Roo Cline', 'rovo-dev': 'Rovo Dev', 'trae': 'Trae',
+    'roo': 'Roo Code', 'rovo-dev': 'Rovo Dev', 'trae': 'Trae',
   };
 
   function applyIde(ide: string) {

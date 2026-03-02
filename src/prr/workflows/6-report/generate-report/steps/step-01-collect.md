@@ -41,6 +41,12 @@ From each file, extract all findings with their:
 - `🟢` or `Low` → Suggestion
 - `❓` → Question (collect separately — do not count as blocker/warning/suggestion)
 
+**Special handling — `improve-code.md`:**
+The improve-code output uses `[CATEGORY]` format (`[BUGS]`, `[QUALITY]`, `[PERFORMANCE]`, `[BEST-PRACTICES]`), not severity emojis. Treat improve-code findings as a separate collection:
+- Do NOT mix them into the Blockers/Warnings/Suggestions counts
+- Include them in the report's **💡 Code Improvement Suggestions** section (see template)
+- Map `[BUGS]` → 🔴 only if the improve-code entry describes an actual bug that could cause incorrect behavior; otherwise keep as 💡 Improvement
+
 ### 4. Count Statistics
 
 Count:

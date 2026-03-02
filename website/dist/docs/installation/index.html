@@ -13,8 +13,10 @@ Platform CLIs are optional. Without them, reviews still run using <code>git diff
 ├── core/
 │   ├── agents/
 │   │   └── prr-master.agent.yaml   # Master orchestrator
-│   └── tasks/
-│       └── workflow.xml            # Workflow engine rules
+│   ├── tasks/
+│   │   └── workflow.xml            # Workflow engine rules
+│   └── workflows/
+│       └── party-mode/             # [PM] All reviewers together
 └── prr/
     ├── agents/                     # Specialist reviewer agents
     ├── config.yaml                 # Your configuration

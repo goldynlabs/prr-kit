@@ -7,27 +7,28 @@ GitHub
 PR Review Kit provides two ways to run a review: quick mode for a fully automated pipeline, and
     manual mode for step-by-step control.
 </p> <h2 id="quick-mode">Quick mode</h2> <p>
-Quick mode runs the full pipeline in one command. It pauses to ask which PR or branch to
-    review, and once more to ask for optional additional context, then handles everything else automatically.
+Quick mode runs the full pipeline in one command. It pauses twice: once to select the PR or branch,
+    and once to ask for review instructions (scope, focus, requirements, or context). Everything else runs automatically.
 </p> <p>Start it from your AI IDE:</p> <pre><code>/prr-quick</code></pre> <p>The pipeline runs in order: select PR, describe changes, collect context, run all reviewers, generate report. Inline comments are posted if your platform is configured.</p> <h2 id="manual-mode">Manual mode</h2> <p>
 Manual mode gives you full control. Start the master agent and pick each step from the menu:
-</p> <pre><code>/prr-master</code></pre> <p>From the menu, you can run any step individually, re-run a specific reviewer, or skip steps you do not need.</p> <h2 id="steps">The seven steps</h2> <h3>1. Select PR</h3> <p>
+</p> <pre><code>/prr-master</code></pre> <p>From the menu, you can run any step individually, re-run a specific reviewer, or skip steps you do not need.</p> <h2 id="steps">The six steps</h2> <h3>1. Select PR</h3> <p>
 Lists open PRs from your platform (GitHub, GitLab, Azure DevOps, or Bitbucket) or lets you
     select branches manually. Enter the PR number and the diff is loaded directly into AI context.
 </p> <h3>2. Describe changes</h3> <p>
 Classifies the PR type (feature, fix, refactor, etc.), generates a concise summary, and produces
     a file-by-file walkthrough of all changes.
 </p> <h3>3. Collect context</h3> <p>
-Runs automatically after step 2. Analyzes the changed files to detect relevant domains, reads
-    project config files and standards documents, extracts inline annotations from the diff, and
+In quick mode, runs automatically after step 2. In manual mode, run <strong>[CC] Collect Context</strong>
+from the master menu after describing the PR. Analyzes the changed files to detect relevant domains,
+    reads project config files and standards documents, extracts inline annotations from the diff, and
     optionally queries MCP tools or RAG systems.
 </p> <p>
-After auto-collection, the agent pauses and asks you for any additional context — such as business
-    rationale, known trade-offs, or specific areas to focus on. If you provide input, it is marked
-<strong>⚠️ IMPORTANT</strong> and all reviewer agents treat it as the highest-priority context.
-    You can skip this prompt by pressing Enter, or disable it permanently with
-<code>skip_manual_input_context: true</code> in your config.
-</p> <p>The result is saved as a context file loaded by all reviewer agents.</p> <h3>4. Deep code review</h3> <p>
+After auto-collection, the agent pauses and asks for review instructions — you can specify which
+    reviews to run (<code>"only security"</code>, <code>"skip performance"</code>), what to focus on,
+    mandatory requirements, or background context. Press Enter for a full standard review.
+    If you provide input, it is stored as <strong>⚠️ IMPORTANT</strong> and controls which reviewers
+    run and what they prioritize.
+</p> <p>The result is saved as <code>pr-context.yaml</code> inside the session folder, loaded by all reviewer agents.</p> <h3>4. Deep code review</h3> <p>
 Runs all specialist reviewer agents — General, Security, Performance, Architecture, and Business
     Review — either in parallel or in sequence. Each agent uses the fresh context collected in step 3.
     See <a href="/docs/reviewers">Reviewer Agents</a> for details on what each one checks.
@@ -42,4 +43,4 @@ Optionally posts findings as inline code comments on the exact file and line in 
 Edit on GitHub
 </a> <a href="https://github.com/mrquangthai278/prr-kit/issues" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">
 Report an issue
-</a> </div> </div> </main> <!-- TOC --> <aside class="hidden xl:block fixed right-0 top-14 bottom-0 w-52 p-6 overflow-y-auto"> <p class="text-[10px] font-bold text-white/25 uppercase tracking-widest mb-3">On this page</p> <ul class="space-y-0.5"> <li> <a href="#quick-mode" class="block text-xs text-white/40 hover:text-white/80 transition-colors py-1 leading-snug"> Quick mode </a> </li><li> <a href="#manual-mode" class="block text-xs text-white/40 hover:text-white/80 transition-colors py-1 leading-snug"> Manual mode </a> </li><li> <a href="#steps" class="block text-xs text-white/40 hover:text-white/80 transition-colors py-1 leading-snug"> The seven steps </a> </li><li> <a href="#severity" class="block text-xs text-white/40 hover:text-white/80 transition-colors py-1 leading-snug"> Severity levels </a> </li> </ul> </aside> </div>  </body></html>  <script type="module">const c=document.getElementById("docs-mobile-btn"),i=document.getElementById("docs-sidebar"),t=document.getElementById("docs-overlay");function d(){i?.classList.remove("-translate-x-full"),t?.classList.remove("hidden")}function l(){i?.classList.add("-translate-x-full"),t?.classList.add("hidden")}c?.addEventListener("click",d);t?.addEventListener("click",l);const o='<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>',r='<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>';document.querySelectorAll(".docs-content h2[id], .docs-content h3[id]").forEach(n=>{const e=document.createElement("button");e.className="docs-anchor-btn",e.setAttribute("aria-label","Copy link to section"),e.innerHTML=o,n.appendChild(e),e.addEventListener("click",()=>{const s=`${window.location.origin}${window.location.pathname}#${n.id}`;navigator.clipboard.writeText(s).then(()=>{e.innerHTML=r,e.classList.add("copied"),setTimeout(()=>{e.innerHTML=o,e.classList.remove("copied")},2e3)})})});</script>
+</a> </div> </div> </main> <!-- TOC --> <aside class="hidden xl:block fixed right-0 top-14 bottom-0 w-52 p-6 overflow-y-auto"> <p class="text-[10px] font-bold text-white/25 uppercase tracking-widest mb-3">On this page</p> <ul class="space-y-0.5"> <li> <a href="#quick-mode" class="block text-xs text-white/40 hover:text-white/80 transition-colors py-1 leading-snug"> Quick mode </a> </li><li> <a href="#manual-mode" class="block text-xs text-white/40 hover:text-white/80 transition-colors py-1 leading-snug"> Manual mode </a> </li><li> <a href="#steps" class="block text-xs text-white/40 hover:text-white/80 transition-colors py-1 leading-snug"> The six steps </a> </li><li> <a href="#severity" class="block text-xs text-white/40 hover:text-white/80 transition-colors py-1 leading-snug"> Severity levels </a> </li> </ul> </aside> </div>  </body></html>  <script type="module">const c=document.getElementById("docs-mobile-btn"),i=document.getElementById("docs-sidebar"),t=document.getElementById("docs-overlay");function d(){i?.classList.remove("-translate-x-full"),t?.classList.remove("hidden")}function l(){i?.classList.add("-translate-x-full"),t?.classList.add("hidden")}c?.addEventListener("click",d);t?.addEventListener("click",l);const o='<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>',r='<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>';document.querySelectorAll(".docs-content h2[id], .docs-content h3[id]").forEach(n=>{const e=document.createElement("button");e.className="docs-anchor-btn",e.setAttribute("aria-label","Copy link to section"),e.innerHTML=o,n.appendChild(e),e.addEventListener("click",()=>{const s=`${window.location.origin}${window.location.pathname}#${n.id}`;navigator.clipboard.writeText(s).then(()=>{e.innerHTML=r,e.classList.add("copied"),setTimeout(()=>{e.innerHTML=o,e.classList.remove("copied")},2e3)})})});</script>

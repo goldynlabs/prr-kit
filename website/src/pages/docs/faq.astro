@@ -41,8 +41,8 @@ const toc = [
   <h3 id="faq-3">Q3. Which IDEs are supported?</h3>
   <p>
     Any AI IDE that can read Markdown and YAML workflow files. Tested with:
-    Antigravity, Auggie, Claude Code, Cline, Codex, Crush, Cursor, Gemini CLI,
-    GitHub Copilot, iFlow, Kilo, Kiro, OpenCode, QwenCoder, Roo Cline, Rovo Dev, Trae, Windsurf.
+    Antigravity, Augment Code, Claude Code, Cline, Codex, Crush, Cursor, Gemini CLI,
+    GitHub Copilot, iFlow, Kilo, Kiro, OpenCode, QwenCoder, Roo Code, Rovo Dev, Trae, Windsurf.
   </p>
 
   <h3 id="faq-4">Q4. How do I install prr-kit?</h3>
@@ -102,11 +102,12 @@ const toc = [
 
   <h3 id="faq-8">Q8. What happens if I skip the <code>[DP] Describe PR</code> step?</h3>
   <p>
-    Context collection runs automatically after <code>[DP]</code>. If you skip it and go straight
-    to a review, the reviewer agents won't have the PR knowledge base — no ESLint rules, no
-    standards docs, no external context. Reviews will still run but will be less accurate.
+    In manual mode, context is not collected automatically — you need to run <code>[CC] Collect Context</code>
+    after <code>[DP]</code> and before starting any review. If you skip both and go straight to a review,
+    the reviewer agents won't have the PR knowledge base — no ESLint rules, no standards docs, no external
+    context. Reviews will still run but will be less accurate.
   </p>
-  <p>Always run <code>[DP]</code> first, or use <code>/prr-quick</code> which handles this automatically.</p>
+  <p>In quick mode (<code>/prr-quick</code>), describe and context collection are handled automatically — no manual steps needed.</p>
 
   <h3 id="faq-9">Q9. How do I post review findings as inline comments on the PR?</h3>
   <p>

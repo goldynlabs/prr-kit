@@ -54,6 +54,19 @@ Store as `{commit_sha}`.
 
 ### 3. Load Review Report
 
+Check that `{session_output}/final-review.md` exists:
+```bash
+ls "{session_output}/final-review.md"
+```
+
+If it does NOT exist:
+```
+❌ No report found at {session_output}/final-review.md
+   Run [RR] Generate Report first to compile all findings into a report,
+   then run [PC] Post Comments to post them.
+```
+Stop workflow.
+
 Read the report at `{session_output}/final-review.md`.
 
 ### 4. Parse All Findings

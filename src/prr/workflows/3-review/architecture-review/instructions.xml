@@ -98,7 +98,7 @@ Context: Loaded architectural patterns & ADRs from project docs
   </step>
 
   <step n="7" goal="Compile and write findings">
-    <action>Group findings: Layer Violations | Coupling Issues | Consistency Problems | SOLID Violations | ❓ Questions for Author</action>
+    <action>Group findings: Layer Violations | Coupling Issues | Consistency Problems | Blast Radius &amp; Breaking Changes | SOLID Violations | ❓ Questions for Author</action>
     <action>For each finding: reference the EXISTING pattern that should be followed instead</action>
     <action>Write findings to {output_file}</action>
     <action>Update {pr_context}: add 'architecture-review' to completed list</action>

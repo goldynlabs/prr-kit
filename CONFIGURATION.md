@@ -47,7 +47,7 @@ external_sources:
 
 ## 3. Context collection
 
-After describing the PR, the agent automatically collects fresh context relevant to the changed files. This context is loaded by all reviewer agents. Collection happens in four steps:
+In **[QR] Quick Review**, context is collected automatically as part of the pipeline (no manual step needed). In **manual mode** (SP → DP → reviews), run **[CC] Collect Context** after describing the PR and before starting any review. Either way, collection happens in four steps:
 
 1. **Analyze changed files** — detect file types, categories (`vue-component`, `pinia-store`, etc.) and domains (`authentication`, `state-management`, etc.)
 2. **Collect from matching sources** — only sources relevant to the changed files and domains are read

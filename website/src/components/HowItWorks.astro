@@ -27,7 +27,7 @@ const steps = [
     step: '04',
     command: 'Automatic',
     title: 'PR-Specific Context',
-    description: 'Automatically collects fresh context for this PR: ESLint rules, CLAUDE.md, CONTRIBUTING.md, inline annotations, only what\'s relevant to changed files.',
+    description: 'Collects fresh PR-specific context: ESLint rules, CLAUDE.md, CONTRIBUTING.md, inline annotations — only what\'s relevant to changed files. Automatic in quick mode; run [CC] in manual mode.',
     color: 'text-white',
   },
   {
@@ -150,15 +150,15 @@ const steps = [
     'qwen':           '/prr-master',
     'codex':          '/prr-master',
     'gemini':         '/prr-master',
-    'windsurf':       'Workflows → prr-master',
-    'cline':          'Workflows → prr-master',
+    'windsurf':       '/prr-master',
+    'cline':          '/prr-master.md',
     'rovo-dev':       'Workflows → prr-master',
-    'trae':           'Workflows → prr-master',
+    'trae':           'Rules auto-apply',
     'antigravity':    'Workflows → prr-master',
     'opencode':       'Commands → prr-master',
     'kilo':           'Mode: prr-core-prr-master',
     'github-copilot': '#prr-master',
-    'kiro':           '@_prr/core/agents/prr-master.md',
+    'kiro':           '#prr-master',
   };
 
   function updatePrrMaster(ide: string) {

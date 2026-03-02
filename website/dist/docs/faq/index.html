@@ -21,7 +21,7 @@ Any AI IDE that can read Markdown and YAML workflow files. Tested with:
 It will prompt you for your name, language, output folder, and Git platform.
     Everything is written automatically to <code>_prr/prr/config.yaml</code>.
     Then open your IDE in that project and run <code>/prr-master</code> to start.
-</p> <h3 id="faq-5">Q5. What's the difference between <code>/prr-quick</code> and <code>/prr-master</code>?</h3> <table> <thead> <tr><th></th><th><code>/prr-quick</code></th><th><code>/prr-master</code></th></tr> </thead> <tbody> <tr> <td><strong>What it does</strong></td> <td>Full pipeline in one command: select PR → describe → collect context → 5 reviews → report</td> <td>Full menu of all commands — run any step individually</td> </tr> <tr> <td><strong>Pauses</strong></td> <td>Once — to ask which PR/branch to review</td> <td>At every step — you control the sequence</td> </tr> <tr> <td><strong>Best for</strong></td> <td>Everyday reviews — fastest path from PR to report</td> <td>Focused reviews — run only Security, or only Architecture, etc.</td> </tr> </tbody> </table> <h2 id="workflow">Review workflow</h2> <h3 id="faq-6">Q6. Can I review a local branch without opening a GitHub/GitLab PR?</h3> <p>
+</p> <h3 id="faq-5">Q5. What's the difference between <code>/prr-quick</code> and <code>/prr-master</code>?</h3> <table> <thead> <tr><th></th><th><code>/prr-quick</code></th><th><code>/prr-master</code></th></tr> </thead> <tbody> <tr> <td><strong>What it does</strong></td> <td>Full pipeline in one command: select PR → describe → collect context → up to 5 reviews → report</td> <td>Full menu of all commands — run any step individually</td> </tr> <tr> <td><strong>Pauses</strong></td> <td>Twice — once to select the PR/branch, once for review instructions (scope, focus, requirements)</td> <td>At every step — you control the sequence</td> </tr> <tr> <td><strong>Best for</strong></td> <td>Everyday reviews — fastest path from PR to report</td> <td>Focused reviews — run only Security, or only Architecture, etc.</td> </tr> </tbody> </table> <h2 id="workflow">Review workflow</h2> <h3 id="faq-6">Q6. Can I review a local branch without opening a GitHub/GitLab PR?</h3> <p>
 Yes. When selecting a PR, you can type any branch name directly instead of choosing from the
     platform PR list. prr-kit will diff it against the base branch using <code>git diff</code>
 — no platform PR required.
@@ -34,10 +34,11 @@ Party Mode (<code>[PM]</code>) runs all 5 reviewer agents in a single collaborat
     Each reviewer sees the findings of the previous ones, so they can build on each other
     instead of repeating the same observations.
 </p> <p>Use it when you want a deep, comprehensive review in one go.</p> <h3 id="faq-8">Q8. What happens if I skip the <code>[DP] Describe PR</code> step?</h3> <p>
-Context collection runs automatically after <code>[DP]</code>. If you skip it and go straight
-    to a review, the reviewer agents won't have the PR knowledge base — no ESLint rules, no
-    standards docs, no external context. Reviews will still run but will be less accurate.
-</p> <p>Always run <code>[DP]</code> first, or use <code>/prr-quick</code> which handles this automatically.</p> <h3 id="faq-9">Q9. How do I post review findings as inline comments on the PR?</h3> <p>
+In manual mode, context is not collected automatically — you need to run <code>[CC] Collect Context</code>
+after <code>[DP]</code> and before starting any review. If you skip both and go straight to a review,
+    the reviewer agents won't have the PR knowledge base — no ESLint rules, no standards docs, no external
+    context. Reviews will still run but will be less accurate.
+</p> <p>In quick mode (<code>/prr-quick</code>), describe and context collection are handled automatically — no manual steps needed.</p> <h3 id="faq-9">Q9. How do I post review findings as inline comments on the PR?</h3> <p>
 Run <code>[PC] Post Comments</code> from the agent menu after generating a report.
     You need <code>platform_repo</code> set in your config and the platform CLI installed:
 </p> <table> <thead> <tr><th>Platform</th><th>Required CLI</th><th>Auth command</th></tr> </thead> <tbody> <tr><td>GitHub</td><td><code>gh</code></td><td><code>gh auth login</code></td></tr> <tr><td>GitLab</td><td><code>glab</code></td><td><code>glab auth login</code></td></tr> <tr><td>Azure DevOps</td><td><code>az</code> + DevOps extension</td><td><code>az login</code></td></tr> <tr><td>Bitbucket</td><td><code>bb</code> or <code>curl</code></td><td>—</td></tr> </tbody> </table> <h3 id="faq-10">Q10. Can I run only one reviewer — e.g. only Security Review?</h3> <p>
