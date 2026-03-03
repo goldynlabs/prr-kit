@@ -178,7 +178,7 @@ The framework installs into your project as a `_prr/` folder. Agents and workflo
 
 ## Configuration
 
-The installer handles configuration interactively — no manual file editing required. During `npx prr-kit install`, you'll be prompted for your name, language, output folder, target repo, and platform.
+The installer handles configuration interactively — no manual file editing required. During `npx prr-kit install`, you'll be prompted for your name, language, and output folder. Platform, repo, and target directory are auto-detected from your git remote.
 
 All values are written to `_prr/prr/config.yaml`. Full schema overview:
 
@@ -189,12 +189,6 @@ communication_language: English        # Any language: English | Vietnamese | Ja
 
 # ─── Project ───────────────────────────────────────────────────────────────
 project_name: my-project               # Display name in reports (cosmetic only)
-target_repo: .                         # Path to git repo (. = current dir, or ../other-repo)
-
-# ─── Platform ──────────────────────────────────────────────────────────────
-platform: auto                         # auto | github | gitlab | azure | bitbucket | none
-platform_repo: "owner/repo"           # owner/repo slug — required for PR listing + inline comments
-                                       # leave blank for local-only mode (git diff only)
 
 # ─── Output ────────────────────────────────────────────────────────────────
 review_output: ./_prr-output/reviews   # Where review reports + context files are written
@@ -297,14 +291,14 @@ Pauses **twice** for user input: once to select the PR/branch, once for review i
 
 ### Selecting a PR (SP step)
 
-**With `platform_repo` configured** — lists open PRs/MRs via platform CLI:
+**When platform is detected** — lists open PRs/MRs via platform CLI:
 ```
 #45  "Add OAuth2 login"      feature/oauth → main    @alice  3h ago
 #44  "Fix memory leak"       fix/memory    → main    @bob    1d ago
 ```
 Enter PR number → base and head resolved automatically.
 
-**Without `platform_repo`** — asks explicitly for both branches:
+**When no platform detected (local mode)** — asks explicitly for both branches:
 ```
 🎯 Head branch (the branch to review)?
    • Enter a number from the list  (e.g., 1)
@@ -365,7 +359,7 @@ Either way, the agent pauses once for your instructions before building the know
 
 ## Inline Code Comments
 
-When `[PC] Post Comments` is run with `platform_repo` configured, it posts findings as **inline code comments** on the exact file and line — the same experience as a human reviewer.
+When `[PC] Post Comments` is run, it posts findings as **inline code comments** on the exact file and line — the same experience as a human reviewer. Platform and repo are auto-detected from your git remote.
 
 | Platform | Method | Required CLI |
 |----------|--------|-------------|

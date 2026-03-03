@@ -34,9 +34,6 @@ class ConfigCollector {
       const prrConfig = {
         ...coreConfig,
         project_name: config.projectName || path.basename(config.projectDir),
-        target_repo: config.targetRepo || '.',
-        platform: config.platform || 'auto',
-        platform_repo: config.platformRepo || config.githubRepo || '',
         review_output: reviewOutput,
       };
       await fs.writeFile(prrConfigPath, yaml.stringify(prrConfig, { indent: 2 }), 'utf8');

@@ -18,7 +18,7 @@ nextStepFile: "./step-02-list-branches.md"
 
 ### 1. Detect Platform
 
-If `{platform}` is `auto` or empty, detect from the git remote URL:
+Detect from the git remote URL:
 
 ```bash
 git -C {target_repo} remote get-url origin

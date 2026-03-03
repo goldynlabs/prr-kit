@@ -62,8 +62,7 @@ winget install GitHub.cli  # Windows
 # Authenticate
 gh auth login</code></pre>
   <p>
-    Set <code>platform_repo</code> in config.yaml to <code>owner/repo</code> (e.g.
-    <code>acme/my-service</code>).
+    Platform and repo are auto-detected from <code>git remote get-url origin</code> — no config needed.
   </p>
 
   <h2 id="gitlab">GitLab</h2>
@@ -74,7 +73,7 @@ brew install glab      # macOS
 
 # Authenticate
 glab auth login</code></pre>
-  <p>Set <code>platform</code> to <code>gitlab</code> and <code>platform_repo</code> to <code>group/project</code>.</p>
+  <p>Platform and repo are auto-detected from <code>git remote get-url origin</code> — no config needed.</p>
 
   <h2 id="azure">Azure DevOps</h2>
   <p>Install the Azure CLI and add the DevOps extension:</p>
@@ -87,9 +86,8 @@ az extension add --name azure-devops
 # Authenticate
 az login</code></pre>
   <p>
-    Set <code>platform</code> to <code>azure</code> and <code>platform_repo</code> to your project
-    identifier. Diff loading falls back to <code>git diff</code> when the Azure CLI does not support
-    it directly.
+    Platform and repo are auto-detected from <code>git remote get-url origin</code> — no config needed.
+    Diff loading falls back to <code>git diff</code> when the Azure CLI does not support it directly.
   </p>
 
   <h2 id="bitbucket">Bitbucket</h2>
@@ -97,12 +95,11 @@ az login</code></pre>
     Bitbucket support uses the <code>bb</code> CLI or <code>curl</code> with the Bitbucket REST API.
     Install the Bitbucket CLI or configure your API token for curl-based requests.
   </p>
-  <p>Set <code>platform</code> to <code>bitbucket</code> and <code>platform_repo</code> to <code>workspace/repo-slug</code>.</p>
+  <p>Platform and repo are auto-detected from <code>git remote get-url origin</code> — no config needed.</p>
 
   <h2 id="local">Local mode</h2>
   <p>
-    If you do not configure a <code>platform_repo</code>, or set <code>platform</code> to
-    <code>none</code>, the review runs in local mode:
+    If no git remote is configured, or the remote cannot be detected, the review runs in local mode:
   </p>
   <ul>
     <li>Diff is generated via <code>git diff</code></li>

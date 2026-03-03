@@ -14,9 +14,6 @@ A full template is available at [`src/prr/config-template.yaml`](src/prr/config-
 user_name: YourName
 communication_language: English
 project_name: my-project
-target_repo: .
-platform: auto
-platform_repo: "owner/repo"
 review_output: /abs/path/_prr-output/reviews
 auto_post_comment: false
 
@@ -28,6 +25,8 @@ external_sources:
   enabled: false
 ```
 
+> **Platform auto-detection:** `target_repo` defaults to `.` (the repo containing this config). Platform (GitHub, GitLab, Azure DevOps, Bitbucket) and repo identifier are detected automatically from `git remote get-url origin` — no manual configuration needed.
+
 ---
 
 ## 2. Core options
@@ -37,9 +36,6 @@ external_sources:
 | `user_name` | set during install | `Alice` | Your name, used in review reports and comments |
 | `communication_language` | `English` | `Vietnamese` | Language for all reviewer agent responses. Any natural language works: `English`, `Vietnamese`, `Japanese`, `French`, etc. |
 | `project_name` | directory name | `acme-backend` | Display name used in reports (cosmetic only) |
-| `target_repo` | `.` | `../my-app` | Path to the repository being reviewed. Use `.` if config is inside the repo, or a relative/absolute path to review a different repo |
-| `platform` | `auto` | `github` | Git platform. `auto` detects from the git remote URL automatically. Options: `auto`, `github`, `gitlab`, `azure`, `bitbucket`, `none` |
-| `platform_repo` | — | `acme/backend-api` | Repository slug in `owner/repo` format. Required for PR listing and inline comment posting. Leave blank for local-only mode (git diff only) |
 | `review_output` | set during install | `./_prr-output/reviews` | Path where Markdown review reports and context files are saved |
 | `auto_post_comment` | `false` | `true` | Set to `true` to auto-post findings after every review — skips the PC prompt in quick workflow |
 
@@ -263,12 +259,11 @@ Session folders persist across conversations. When you start a new conversation 
 
 ## 6. Examples
 
-### 6.1 Minimal config (local-only)
+### 6.1 Minimal config
 
 ```yaml
 user_name: Alice
 communication_language: English
-target_repo: .
 review_output: ./_prr-output/reviews
 
 context_collection:
@@ -279,15 +274,12 @@ external_sources:
   enabled: false
 ```
 
-### 6.2 Full config (with MCP + GitHub)
+### 6.2 Full config (with MCP)
 
 ```yaml
 user_name: Alice
 communication_language: English
 project_name: acme-backend
-target_repo: .
-platform: github
-platform_repo: "acme/backend-api"
 review_output: /home/alice/projects/acme/_prr-output/reviews
 
 context_collection:
@@ -456,16 +448,7 @@ Nothing breaks. All external sources fail silently — the review continues with
 
 ### I want to review a repo in a different folder than my config. How?
 
-Set `target_repo` to a relative or absolute path pointing to the other repo:
-
-```yaml
-# config lives in: /home/alice/tools/_prr/prr/config.yaml
-# repo to review:  /home/alice/projects/my-app
-
-target_repo: /home/alice/projects/my-app
-# or relative:
-target_repo: ../../projects/my-app
-```
+Install prr-kit directly into the repo you want to review by running `npx prr-kit install` from inside that repo. The config file will be created at `_prr/prr/config.yaml` within that repo, and `target_repo` will automatically resolve to `.`.
 
 ---
 

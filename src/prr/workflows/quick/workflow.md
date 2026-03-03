@@ -11,8 +11,9 @@ Only pause for user input when selecting the branch. Everything else runs automa
 
 ## INITIALIZATION
 
-Load config from {main_config}: `user_name`, `communication_language`, `target_repo`, `review_output`, `auto_post_comment`.
+Load config from {main_config}: `user_name`, `communication_language`, `review_output`, `auto_post_comment`.
 
+Set `target_repo` = `.` (the repository containing this config file).
 Set `date` = today's date (YYYY-MM-DD).
 
 **Note:** Context will be collected dynamically in Phase 2.5 after describing the PR.
@@ -42,14 +43,14 @@ Map the remote URL to a platform:
 
 Set `{detected_platform}` = detected value.
 
-If `{platform_repo}` is empty, also extract `{detected_platform_repo}` from the URL:
+Also extract `{detected_platform_repo}` from the URL:
 - GitHub/GitLab/Bitbucket: extract `owner/repo` (strip `.git` suffix)
 - Azure DevOps: extract `org/project/repo` from `dev.azure.com/{org}/{project}/_git/{repo}` or `{org}.visualstudio.com/{project}/_git/{repo}`
 
 Display:
 ```
 🔍 Platform detected: {detected_platform}
-   Remote: {platform_repo or detected_platform_repo}
+   Remote: {detected_platform_repo}
 ```
 
 If platform cannot be detected, set `{detected_platform}` = `none` and continue.
@@ -68,29 +69,38 @@ git -C {target_repo} fetch origin --prune
 
 ### 1b. List open PRs/MRs (primary) + recent branches (secondary)
 
-**Primary — Platform PRs/MRs** (if `{platform_repo}` is configured):
+**Resolve active repo identifier** (before running any CLI):
+- Set `{active_platform}` = `{detected_platform}`
+- Set `{active_platform_repo}` = `{detected_platform_repo}`
 
-Use the appropriate command based on `{platform}` (or `{detected_platform}`):
+For **Azure DevOps**, extract from `{active_platform_repo}` (format: `org/project/repo`):
+- `{az_org}` = first segment → `{az_org}.visualstudio.com` as `{org_url}`
+- `{az_project}` = second segment
+- `{az_repo}` = third segment
+
+**Primary — Platform PRs/MRs** (if `{active_platform_repo}` is available and `{active_platform}` ≠ `none`):
+
+Use the appropriate command based on `{active_platform}`:
 
 **GitHub:**
 ```bash
-gh pr list --repo {platform_repo} --state open \
+gh pr list --repo {active_platform_repo} --state open \
   --json number,title,headRefName,baseRefName,author,createdAt,isDraft --limit 20
 ```
 
 **GitLab:**
 ```bash
-glab mr list --repo {platform_repo} --state opened --output json
+glab mr list --repo {active_platform_repo} --state opened --output json
 ```
 
 **Azure DevOps:**
 ```bash
-az repos pr list --repository {repo} --project {project} --org {org_url} --status active --output json
+az repos pr list --repository {az_repo} --project {az_project} --org https://{org_url} --status active --output json
 ```
 
 **Bitbucket:**
 ```bash
-curl https://api.bitbucket.org/2.0/repositories/{platform_repo}/pullrequests?state=OPEN
+curl https://api.bitbucket.org/2.0/repositories/{active_platform_repo}/pullrequests?state=OPEN
 ```
 
 Display as a table: `#N | title | head → base | author | age`
@@ -104,7 +114,7 @@ git -C {target_repo} branch -r --sort=-committerdate \
 
 ### 1c. Select PR/MR ← **ONLY USER INPUT IN THIS WORKFLOW**
 
-**If `{platform_repo}` is configured** — ask:
+**If `{active_platform_repo}` is available and `{active_platform}` ≠ `none`** — ask:
 > Select a PR/MR to review:
 > Enter PR/MR number (e.g. `44`) or branch name (e.g. `feature/my-feature`):
 
@@ -114,7 +124,7 @@ Wait for response.
 
 **GitHub:**
 ```bash
-gh pr view {pr_number} --repo {platform_repo} \
+gh pr view {pr_number} --repo {active_platform_repo} \
   --json number,title,headRefName,baseRefName,author,headRefOid
 ```
 Set `target_branch` = `headRefName`, `base_branch` = `baseRefName` ← **exact from platform, not assumed**.
@@ -122,20 +132,20 @@ Set `pr_head_sha` = `headRefOid`.
 
 **GitLab:**
 ```bash
-glab mr view {pr_number} --repo {platform_repo} --output json
+glab mr view {pr_number} --repo {active_platform_repo} --output json
 ```
 Set `target_branch` = `source_branch`, `base_branch` = `target_branch`.
 Get head SHA: `git -C {target_repo} rev-parse origin/{target_branch}` → `pr_head_sha`.
 
 **Azure DevOps:**
 ```bash
-az repos pr show --id {pr_number} --output json
+az repos pr show --id {pr_number} --org https://{org_url} --output json
 ```
 Set `target_branch` = `sourceRefName` (strip `refs/heads/`), `base_branch` = `targetRefName` (strip `refs/heads/`).
 
 **Bitbucket:**
 ```bash
-curl https://api.bitbucket.org/2.0/repositories/{platform_repo}/pullrequests/{pr_number}
+curl https://api.bitbucket.org/2.0/repositories/{active_platform_repo}/pullrequests/{pr_number}
 ```
 Set `target_branch` = `source.branch.name`, `base_branch` = `destination.branch.name`.
 
@@ -144,7 +154,7 @@ Check if a PR/MR exists for it on the platform. If yes: use its base branch. If 
 
 ---
 
-**If `{platform_repo}` is NOT configured** — ask two separate questions:
+**If `{active_platform_repo}` is NOT available or `{active_platform}` = `none`** — ask two separate questions:
 
 First, display EXACTLY:
 ```
@@ -174,12 +184,12 @@ Use the first available method based on platform:
 
 **GitHub** (if `active_platform = github` and `pr_number` is set):
 ```bash
-gh pr diff {pr_number} --repo {platform_repo}
+gh pr diff {pr_number} --repo {active_platform_repo}
 ```
 
 **GitLab** (if `active_platform = gitlab` and `pr_number` is set):
 ```bash
-glab mr diff {pr_number} --repo {platform_repo}
+glab mr diff {pr_number} --repo {active_platform_repo}
 ```
 
 **Azure DevOps / Bitbucket / fallback:**
@@ -219,7 +229,7 @@ Create folder:
 mkdir -p "{session_output}"
 ```
 
-**Store in working context:** `session_output`, `target_branch`, `base_branch`, `pr_number`, `pr_title`, `active_platform`, `platform_repo`.
+**Store in working context:** `session_output`, `target_branch`, `base_branch`, `pr_number`, `pr_title`, `active_platform`, `active_platform_repo`.
 
 ### 1f. Generate Diffs Folder
 
@@ -448,7 +458,7 @@ Report:  {session_output}/final-review.md
 
 **If `auto_post_comment: false`** (default):
 → Ask:
-> Post these findings as inline comments to the PR/MR? (requires platform CLI and `platform_repo` configured)
+> Post these findings as inline comments to the PR/MR? (requires platform CLI)
 > Supports: GitHub (`gh`), GitLab (`glab`), Azure DevOps (`az`), Bitbucket (API)
 > Type **PC** to post, or **Enter** to finish.
 

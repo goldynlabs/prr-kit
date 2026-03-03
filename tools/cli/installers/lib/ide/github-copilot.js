@@ -156,7 +156,7 @@ ${body}
 
 - **User**: ${config.user_name || 'Dev'}
 - **Communication Language**: ${config.communication_language || 'English'}
-- **Target Repo**: ${config.target_repo || '.'}
+- **Target Repo**: . (auto-detected)
 - **Output Folder**: ${config.output_folder || '_prr-output'}
 - **Review Output**: ${config.review_output || '_prr-output/reviews'}
 

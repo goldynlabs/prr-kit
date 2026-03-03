@@ -7,11 +7,6 @@ communication_language: English      # Language for all review output
 
 # ─── Project ───────────────────────────────────────────────────────────────
 project_name: my-project
-target_repo: .                       # Path to git repo (. = current directory)
-
-# ─── Platform ──────────────────────────────────────────────────────────────
-platform: github                     # auto | github | gitlab | azure | bitbucket | none
-platform_repo: "org/repo-name"       # Used for gh pr list, gh pr view, etc.
 
 # ─── Output ────────────────────────────────────────────────────────────────
 review_output: ./_prr-output/reviews # Where review reports are written

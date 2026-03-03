@@ -112,7 +112,7 @@ const toc = [
   <h3 id="faq-9">Q9. How do I post review findings as inline comments on the PR?</h3>
   <p>
     Run <code>[PC] Post Comments</code> from the agent menu after generating a report.
-    You need <code>platform_repo</code> set in your config and the platform CLI installed:
+    You need the platform CLI installed and authenticated:
   </p>
   <table>
     <thead>
@@ -141,7 +141,7 @@ const toc = [
     If you don't need either of those, prr-kit works entirely via <code>git diff</code> — no CLI required.
   </p>
   <p>
-    Set <code>platform: none</code> in your config to explicitly run in local-only mode.
+    If no git remote is configured, prr-kit automatically runs in local-only mode.
   </p>
 
   <h3 id="faq-12">Q12. Does prr-kit work with private repos?</h3>
@@ -153,12 +153,10 @@ const toc = [
 
   <h3 id="faq-13">Q13. I use Azure DevOps. Is anything different?</h3>
   <p>
-    Set <code>platform: azure</code> and <code>platform_repo: org/project/repo</code>
-    (note the three-part format for Azure, vs two-part for GitHub/GitLab).
+    No extra config needed — platform and repo are auto-detected from your git remote URL
+    (format: <code>org/project/repo</code>).
     The <code>az</code> CLI with the Azure DevOps extension is required for PR listing and comment posting.
   </p>
-  <pre><code>platform: azure
-platform_repo: "my-org/my-project/my-repo"</code></pre>
 
   <h2 id="stacks">Stack support</h2>
 

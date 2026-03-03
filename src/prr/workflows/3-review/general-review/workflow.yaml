@@ -5,7 +5,7 @@ author: "PR Review Kit"
 config_source: "{project-root}/_prr/prr/config.yaml"
 user_name: "{config_source}:user_name"
 communication_language: "{config_source}:communication_language"
-target_repo: "{config_source}:target_repo"
+target_repo: "."
 review_output: "{config_source}:review_output"
 session_output: "working-context:session_output || latest-session-folder-in:{review_output}"
 date: system-generated

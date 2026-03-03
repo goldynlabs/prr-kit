@@ -37,9 +37,8 @@ Depends on `{active_platform}`:
 ## INITIALIZATION
 
 Load config from `{main_config}`.
-Use `session_output`, `target_branch`, `base_branch`, `pr_number`, `active_platform` from working context.
+Use `session_output`, `target_branch`, `base_branch`, `pr_number`, `active_platform`, `active_platform_repo` from working context.
 If `session_output` not set: prompt user to run [SS] Select Session or [SP] Select PR first.
-Use `{active_platform}` (or detect from `{platform}` config).
 
 Set `{temp_dir}` = `{session_output}/temp`.
 Create it if it doesn't exist:

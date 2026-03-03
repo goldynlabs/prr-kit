@@ -22,9 +22,6 @@ const toc = [
   <pre><code>user_name: YourName
 communication_language: English
 project_name: my-project
-target_repo: .
-platform: auto
-platform_repo: "owner/repo"
 review_output: /abs/path/_prr-output/reviews
 auto_post_comment: false
 
@@ -34,6 +31,10 @@ context_collection:
 
 external_sources:
   enabled: false</code></pre>
+  <p>
+    <strong>Platform auto-detection:</strong> <code>target_repo</code> defaults to <code>.</code> (the repo containing this config).
+    Platform (GitHub, GitLab, Azure DevOps, Bitbucket) and repo identifier are detected automatically from <code>git remote get-url origin</code> — no manual configuration needed.
+  </p>
 
   <h2 id="core">2. Core options</h2>
   <table>
@@ -58,27 +59,6 @@ external_sources:
         <td><em>directory name</em></td>
         <td><code>acme-backend</code></td>
         <td>Display name used in reports (cosmetic only)</td>
-      </tr>
-      <tr>
-        <td><code>target_repo</code></td>
-        <td><code>.</code></td>
-        <td><code>../my-app</code></td>
-        <td>Path to the repository being reviewed. Use <code>.</code> if config is inside the repo, or a relative/absolute path to review a different repo</td>
-      </tr>
-      <tr>
-        <td><code>platform</code></td>
-        <td><code>auto</code></td>
-        <td><code>github</code></td>
-        <td>
-          Git platform. <code>auto</code> detects from the git remote URL automatically.<br/>
-          Options: <code>auto</code>, <code>github</code>, <code>gitlab</code>, <code>azure</code>, <code>bitbucket</code>, <code>none</code>
-        </td>
-      </tr>
-      <tr>
-        <td><code>platform_repo</code></td>
-        <td><em>optional</em></td>
-        <td><code>acme/backend-api</code></td>
-        <td>Repository slug in <code>owner/repo</code> format. Required for PR listing and inline comment posting. Leave blank for local-only mode (git diff only)</td>
       </tr>
       <tr>
         <td><code>review_output</code></td>
@@ -447,10 +427,9 @@ pattern:  ([A-Z]+-\d+)
 
   <h2 id="examples">6. Examples</h2>
 
-  <h3>6.1 Minimal config (local-only)</h3>
+  <h3>6.1 Minimal config</h3>
   <pre><code>user_name: Alice
 communication_language: English
-target_repo: .
 review_output: ./_prr-output/reviews
 
 context_collection:
@@ -460,13 +439,10 @@ context_collection:
 external_sources:
   enabled: false</code></pre>
 
-  <h3>6.2 Full config (with MCP + GitHub)</h3>
+  <h3>6.2 Full config (with MCP)</h3>
   <pre><code>user_name: Alice
 communication_language: English
 project_name: acme-backend
-target_repo: .
-platform: github
-platform_repo: "acme/backend-api"
 review_output: /home/alice/projects/acme/_prr-output/reviews
 
 context_collection:

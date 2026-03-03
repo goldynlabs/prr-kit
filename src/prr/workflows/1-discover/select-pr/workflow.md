@@ -28,8 +28,10 @@ This uses **step-file architecture** with sequential orchestration:
 ## INITIALIZATION
 
 Load config from `{main_config}` and resolve:
-- `project_name`, `target_repo`, `user_name`, `communication_language`
-- `review_output`, `platform_repo`, `date` (system-generated)
+- `project_name`, `user_name`, `communication_language`
+- `review_output`, `date` (system-generated)
+
+Set `target_repo` = `.` (the repository containing this config file).
 
 ## EXECUTION
 
