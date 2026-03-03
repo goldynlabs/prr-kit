@@ -65,15 +65,6 @@ class UI {
       || (!cliOptions.yes && await this._ask('Output folder (relative to project root)?', '_prr-output'))
       || '_prr-output';
 
-    // PRR module config
-    const targetRepo = cliOptions.targetRepo
-      || (!cliOptions.yes && await this._ask('Path to the git repo to review?', '.'))
-      || '.';
-
-    const githubRepo = cliOptions.githubRepo
-      || (!cliOptions.yes && await this._ask('GitHub repo for posting comments? (owner/repo, blank to skip)', ''))
-      || '';
-
     // Modules (default: prr)
     const modulesInput = cliOptions.modules
       ? parseList(cliOptions.modules)
@@ -95,6 +86,7 @@ class UI {
           label: ide.name,
           hint: ide.preferred ? 'recommended' : undefined,
         })),
+        initialValues: availableIdes.filter((ide) => ide.preferred).map((ide) => ide.value),
         required: false,
       });
       selectedIdes = clack.isCancel(choices) ? [] : choices;
@@ -110,8 +102,6 @@ class UI {
       userName,
       communicationLanguage,
       outputFolder,
-      targetRepo,
-      githubRepo,
       selectedModules: modulesInput,
       selectedIdes,
       existing,

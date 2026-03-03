@@ -100,6 +100,21 @@ class IdeManager {
     return this.getAvailableIdes().filter((i) => i.preferred);
   }
 
+  getTargetDirs(ideName) {
+    const handler = this.handlers.get(ideName.toLowerCase());
+    if (!handler) return [];
+    if (typeof handler.getTargetDirs === 'function') return handler.getTargetDirs();
+    if (handler.installerConfig) {
+      if (handler.installerConfig.targets) {
+        return handler.installerConfig.targets.map((t) => t.target_dir);
+      }
+      if (handler.installerConfig.target_dir) {
+        return [handler.installerConfig.target_dir];
+      }
+    }
+    return [];
+  }
+
   async setup(ideName, projectDir, prrDir, options = {}) {
     await this.ensureInitialized();
     const handler = this.handlers.get(ideName.toLowerCase());

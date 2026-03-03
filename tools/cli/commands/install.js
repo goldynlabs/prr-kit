@@ -17,8 +17,6 @@ module.exports = {
     ['--user-name <name>', 'Name for agents to use'],
     ['--communication-language <lang>', 'Language for agent communication (default: English)'],
     ['--output-folder <path>', 'Output folder relative to project root (default: _prr-output)'],
-    ['--target-repo <path>', 'Path to git repository to review (default: .)'],
-    ['--github-repo <owner/repo>', 'GitHub repository for posting comments (optional)'],
     ['-y, --yes', 'Accept all defaults and skip prompts'],
   ],
   action: async (options) => {

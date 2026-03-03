@@ -103,6 +103,10 @@ IT IS CRITICAL THAT YOU FOLLOW THIS COMMAND: LOAD the FULL @{project-root}/${rel
     return { success: true, results: { agents: modeCount, workflows: wfCount } };
   }
 
+  getTargetDirs() {
+    return ['.kilocode/workflows'];
+  }
+
   async cleanup(projectDir) {
     // Remove prr- modes from .kilocodemodes
     const kiloModesPath = path.join(projectDir, this.configFile);

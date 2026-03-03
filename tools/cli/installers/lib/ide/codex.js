@@ -100,6 +100,10 @@ IT IS CRITICAL THAT YOU FOLLOW THIS COMMAND: LOAD the FULL @{project-root}/${rel
     return { success: true, results: { agents: count, workflows: 0 } };
   }
 
+  getTargetDirs() {
+    return ['.codex/prompts'];
+  }
+
   async cleanup(projectDir) {
     for (const loc of ['global', 'project']) {
       const dir = this._getPromptDir(projectDir, loc);

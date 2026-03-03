@@ -208,6 +208,10 @@ Use \`#prr-\` in Copilot Chat to access PR Review prompts, or select agents from
     }
   }
 
+  getTargetDirs() {
+    return ['.github/agents', '.github/prompts'];
+  }
+
   async cleanup(projectDir, options = {}) {
     // Clean agents
     const agentsDir = path.join(projectDir, this.githubDir, this.agentsDir);

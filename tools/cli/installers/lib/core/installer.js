@@ -63,6 +63,15 @@ class Installer {
     await fs.ensureDir(path.join(outputFolderAbs, 'reviews'));
     await prompts.log.info('  ✓ Output directories created');
 
+    // Update .gitignore
+    const ideGitignorePatterns = selectedIdes.flatMap((ide) =>
+      this.ideManager.getTargetDirs(ide).flatMap((dir) => [
+        `${dir}/prr-*`,
+        `${dir}/.prr-installed.json`,
+      ])
+    );
+    await this.updateGitignore(projectDir, config.outputFolder || '_prr-output', ideGitignorePatterns);
+
     // Generate manifests
     const cfgDir = path.join(prrDir, '_config');
     await fs.ensureDir(cfgDir);
@@ -133,6 +142,23 @@ class Installer {
         }
       }
     }
+  }
+
+  async updateGitignore(projectDir, outputFolder, extraPatterns = []) {
+    const gitignorePath = path.join(projectDir, '.gitignore');
+    const entries = [`${PRR_FOLDER_NAME}/`, `${outputFolder}/`, ...extraPatterns];
+
+    if (!(await fs.pathExists(gitignorePath))) return;
+
+    const content = await fs.readFile(gitignorePath, 'utf8');
+    const lines = content.split('\n').map((l) => l.trim());
+    const toAdd = entries.filter((e) => !lines.includes(e) && !lines.includes(e.replace(/\/$/, '')));
+
+    if (toAdd.length === 0) return;
+
+    const separator = content.endsWith('\n') ? '' : '\n';
+    await fs.appendFile(gitignorePath, `${separator}# PR Review Kit\n${toAdd.join('\n')}\n`, 'utf8');
+    await prompts.log.info(`  ✓ .gitignore updated (${toAdd.join(', ')})`);
   }
 
   async uninstall(projectDir) {
