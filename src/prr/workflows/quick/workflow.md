@@ -180,28 +180,7 @@ Wait for response. If empty → detect `origin/main` or `origin/master`.
 Set `base_branch` = input or detected default.
 Set `diff_range` = `{base_branch}...{target_branch}`.
 
-### 1d. Load diff
-
-Use the first available method based on platform:
-
-**GitHub** (if `active_platform = github` and `pr_number` is set):
-```bash
-gh pr diff {pr_number} --repo {active_platform_repo}
-```
-
-**GitLab** (if `active_platform = gitlab` and `pr_number` is set):
-```bash
-glab mr diff {pr_number} --repo {active_platform_repo}
-```
-
-**Azure DevOps / Bitbucket / fallback:**
-```bash
-git -C {target_repo} diff {base_branch}...{target_branch} --stat
-git -C {target_repo} diff {base_branch}...{target_branch}
-```
-Store diff in memory. Count files changed, lines added/removed.
-
-### 1e. Create Session Folder
+### 1d. Create Session Folder
 
 Compute the session output folder:
 
@@ -233,9 +212,30 @@ mkdir -p "{session_output}"
 
 **Store in working context:** `session_output`, `target_branch`, `base_branch`, `pr_number`, `pr_title`, `active_platform`, `active_platform_repo`.
 
+### 1e. Load diff
+
+Use the first available method based on platform:
+
+**GitHub** (if `active_platform = github` and `pr_number` is set):
+```bash
+gh pr diff {pr_number} --repo {active_platform_repo} > "{session_output}/full.diff"
+```
+
+**GitLab** (if `active_platform = gitlab` and `pr_number` is set):
+```bash
+glab mr diff {pr_number} --repo {active_platform_repo} > "{session_output}/full.diff"
+```
+
+**Azure DevOps / Bitbucket / fallback:**
+```bash
+git -C {target_repo} diff {base_branch}...{target_branch} > "{session_output}/full.diff"
+```
+
+Save the full diff to `{session_output}/full.diff`. Read that file to count files changed, lines added/removed.
+
 ### 1f. Generate Diffs Folder
 
-Parse the diff loaded in 1d and write per-file markdown files under `{session_output}/diffs/`, mirroring the repo folder tree.
+Parse `{session_output}/full.diff` and write per-file markdown files under `{session_output}/diffs/`, mirroring the repo folder tree.
 
 **For each changed file in the diff:**
 
@@ -274,6 +274,8 @@ After writing all files, show summary:
   Files changed: X | +Y / -Z lines
 ✓ Diffs saved: {file_count} files → {session_output}/diffs/
 ```
+
+**⛔ After this point, do NOT run any further `git diff` commands to read file changes. All diff content is now available at `{session_output}/diffs/`. Read those files directly for all subsequent phases.**
 
 ---
 
