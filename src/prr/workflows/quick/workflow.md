@@ -327,14 +327,15 @@ On completion, store `pr_knowledge_base` = path to the generated context file.
 
 ## PHASE 3 — REVIEW
 
-**Context:** Confirm `target_branch`, `base_branch`, `session_output`, `pr_knowledge_base`, `communication_language` are in working context from earlier phases. Set `output_file` per review as defined below.
+**Context:** Confirm `target_branch`, `base_branch`, `session_output`, `pr_knowledge_base`, `communication_language` are in working context from earlier phases.
 
 **Review orchestration:** Read `user_instructions` from `{pr_knowledge_base}`. Use judgment to decide which review skills (3a–3e) to run, in what order, and with what focus — based on the user's actual intent, the PR type, and the project context.
 - No user instructions provided → run all reviews in default order.
 - User specified scope, focus, or constraints → adapt accordingly: skip irrelevant reviews, reorder, or narrow focus to serve the user's actual need. Reviews are optional skills — invoke only what genuinely serves the request.
-- For each skipped review: print `⏭️ {Review Name} skipped` and do not write its output file.
+- **For each skipped review: print `⏭️ {Review Name} skipped` then move on. Do NOT set `output_file`. Do NOT load the instructions file. Do NOT create any file. Execute nothing else for that review.**
 
 ### 3a. General Review
+*Skip entirely if not in scope — print `⏭️ General Review skipped` and stop here for this review.*
 Set `output_file` = `{session_output}/general-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/general-review/instructions.xml`
 
@@ -342,6 +343,7 @@ Collect findings as `{general_findings}`.
 Print section header: `## 👁️ General Review`
 
 ### 3b. Security Review
+*Skip entirely if not in scope — print `⏭️ Security Review skipped` and stop here for this review.*
 Set `output_file` = `{session_output}/security-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/security-review/instructions.xml`
 
@@ -349,6 +351,7 @@ Collect findings as `{security_findings}`.
 Print section header: `## 🔒 Security Review`
 
 ### 3c. Performance Review
+*Skip entirely if not in scope — print `⏭️ Performance Review skipped` and stop here for this review.*
 Set `output_file` = `{session_output}/performance-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/performance-review/instructions.xml`
 
@@ -356,6 +359,7 @@ Collect findings as `{performance_findings}`.
 Print section header: `## ⚡ Performance Review`
 
 ### 3d. Architecture Review
+*Skip entirely if not in scope — print `⏭️ Architecture Review skipped` and stop here for this review.*
 Set `output_file` = `{session_output}/architecture-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/architecture-review/instructions.xml`
 
@@ -363,6 +367,7 @@ Collect findings as `{architecture_findings}`.
 Print section header: `## 🏗️ Architecture Review`
 
 ### 3e. Business Review
+*Skip entirely if not in scope — print `⏭️ Business Review skipped` and stop here for this review.*
 Set `output_file` = `{session_output}/business-review.md`
 Load and follow: `{project-root}/_prr/prr/workflows/3-review/business-review/instructions.xml`
 

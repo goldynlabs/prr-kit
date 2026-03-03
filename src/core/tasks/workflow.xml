@@ -7,6 +7,7 @@
     <rule>ALWAYS halt at decision points and wait for user input</rule>
     <rule>ALWAYS load config variables before starting any workflow</rule>
     <rule>Use native file-reading tools for file content — avoid shell commands for reading files</rule>
+    <rule>For runtime code execution (file parsing, JSON building, temp file operations), use Node.js — do not assume Python is available</rule>
   </rules>
 
   <variable-resolution>

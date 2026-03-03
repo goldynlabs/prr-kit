@@ -149,22 +149,14 @@ Bash heredoc breaks with Unicode characters, emojis, backticks, and nested quote
 2. **Execute** it with `node`
 3. Script writes the final JSON to `{temp_dir}/prr-payload.json`
 
-**Step A — Detect available runtime:**
-```bash
-node --version 2>/dev/null && echo "use-node" || (python3 --version 2>/dev/null && echo "use-python3") || echo "no-runtime"
-```
-Prefer `node`. Fallback: `python3`, then `python`.
+**Step A — Write the build script using the Write tool** (NOT echo/heredoc/Bash):
 
-**Step B — Write the build script using the Write tool** (NOT echo/heredoc/Bash):
-
-Use the Write tool to create `{temp_dir}/build-payload.mjs` (Node.js) or `{temp_dir}/build-payload.py` (Python).
+Use the Write tool to create `{temp_dir}/build-payload.mjs`.
 
 The script must:
-- Define all string values (comment bodies, summary) as native string variables — no manual JSON escaping needed, the runtime handles it
+- Define all string values (comment bodies, summary) as native string variables — no manual JSON escaping needed, Node.js handles it
 - Build the payload object in memory
-- Write to `{temp_dir}/prr-payload.json` using native JSON serialization:
-  - Node.js: `JSON.stringify(payload, null, 2)`
-  - Python: `json.dumps(payload, ensure_ascii=False, indent=2)`
+- Write to `{temp_dir}/prr-payload.json` using `JSON.stringify(payload, null, 2)`
 
 **Node.js template** (`build-payload.mjs`):
 ```js
@@ -184,36 +176,14 @@ writeFileSync("{temp_dir}/prr-payload.json", JSON.stringify(payload, null, 2), "
 console.log(`OK: ${payload.comments.length} comments`)
 ```
 
-**Python template** (`build-payload.py`):
-```python
-import json
-
-payload = {
-    "commit_id": "COMMIT_SHA",
-    "body": "SUMMARY BODY",
-    "event": "REQUEST_CHANGES",
-    "comments": [
-        {"path": "src/file.js", "line": 42, "side": "RIGHT", "body": "🔴 **[BLOCKER]** ..."},
-    ]
-}
-
-with open("{temp_dir}/prr-payload.json", "w", encoding="utf-8") as f:
-    json.dump(payload, f, ensure_ascii=False, indent=2)
-print(f"OK: {len(payload['comments'])} comments")
-```
-
-**Step C — Execute:**
+**Step B — Execute:**
 ```bash
 node "{temp_dir}/build-payload.mjs"
-# or: python3 "{temp_dir}/build-payload.py"
 ```
 
-**Step D — Verify output (optional sanity check):**
+**Step C — Verify output (optional sanity check):**
 ```bash
-# Node.js
 node -e "const p=require('{temp_dir}/prr-payload.json'); console.log('OK:', p.comments.length, 'comments')"
-# Python
-python3 -c "import json; p=json.load(open('{temp_dir}/prr-payload.json')); print('OK:', len(p['comments']), 'comments')"
 ```
 
 ---

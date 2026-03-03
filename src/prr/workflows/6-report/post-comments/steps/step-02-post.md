@@ -27,14 +27,9 @@ description: "Post comments via platform CLI/API, verify, clean up"
 **Case A — Self-review** (`"Review Can not request changes on your own pull request"`):
 - The authenticated user is the PR author. GitHub disallows `REQUEST_CHANGES` on own PRs.
 - Fix: Update `event` in the payload from `"REQUEST_CHANGES"` to `"COMMENT"` and retry once.
-- Use whichever runtime is available (`{detected_runtime}` from step A earlier):
 
 ```bash
-# Node.js
 node -e "const fs=require('fs'); const p=JSON.parse(fs.readFileSync('{temp_dir}/prr-payload.json','utf-8')); p.event='COMMENT'; fs.writeFileSync('{temp_dir}/prr-payload.json',JSON.stringify(p,null,2)); console.log('event → COMMENT')"
-
-# Python3
-python3 -c "import json; f=open('{temp_dir}/prr-payload.json','r+'); p=json.load(f); p['event']='COMMENT'; f.seek(0); json.dump(p,f,ensure_ascii=False,indent=2); f.truncate(); print('event → COMMENT')"
 ```
 Then retry the POST above.
 
@@ -79,7 +74,7 @@ done
 
 Use the runtime script approach to build the summary payload first:
 
-Write `{temp_dir}/build-bb-summary.mjs` (or `.py`) using the Write tool:
+Write `{temp_dir}/build-bb-summary.mjs` using the Write tool:
 
 ```js
 // Node.js
@@ -167,9 +162,7 @@ rm -f "{temp_dir}/prr-payload.json" \
        "{temp_dir}/prr-bb-"*.json \
        "{temp_dir}/prr-bb-summary.json" \
        "{temp_dir}/build-payload.mjs" \
-       "{temp_dir}/build-payload.py" \
-       "{temp_dir}/build-bb-summary.mjs" \
-       "{temp_dir}/build-bb-summary.py"
+       "{temp_dir}/build-bb-summary.mjs"
 rmdir "{temp_dir}" 2>/dev/null || true
 ```
 
