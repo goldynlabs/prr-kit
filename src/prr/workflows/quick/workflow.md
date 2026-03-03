@@ -23,11 +23,48 @@ No pre-collected context file needed. Context is always fresh and PR-specific.
 ## PHASE 1 — SELECT PR
 *Execute steps 1a–1b automatically. Pause only at 1c.*
 
-### 1a. Fetch latest
+### 1a. Detect platform and fetch latest
+
+**Step 1 — Detect platform** (mandatory, always run):
+```bash
+git -C {target_repo} remote get-url origin
+```
+
+Map the remote URL to a platform:
+
+| Remote URL pattern | Platform |
+|---|---|
+| `github.com` | `github` |
+| `gitlab.com` or self-hosted GitLab | `gitlab` |
+| `dev.azure.com` or `visualstudio.com` | `azure` |
+| `bitbucket.org` | `bitbucket` |
+| No remote / local only | `none` |
+
+Set `{detected_platform}` = detected value.
+
+If `{platform_repo}` is empty, also extract `{detected_platform_repo}` from the URL:
+- GitHub/GitLab/Bitbucket: extract `owner/repo` (strip `.git` suffix)
+- Azure DevOps: extract `org/project/repo` from `dev.azure.com/{org}/{project}/_git/{repo}` or `{org}.visualstudio.com/{project}/_git/{repo}`
+
+Display:
+```
+🔍 Platform detected: {detected_platform}
+   Remote: {platform_repo or detected_platform_repo}
+```
+
+If platform cannot be detected, set `{detected_platform}` = `none` and continue.
+
+**Step 2 — Fetch latest:**
 ```bash
 git -C {target_repo} fetch origin --prune
 ```
-Show: `✓ Fetched latest from remote`
+
+**If fetch succeeds:** Show `✓ Fetched latest from remote` and proceed.
+
+**If fetch fails:**
+- Show the error message
+- Ask user: Retry / Continue with local state / Cancel
+- Wait for response before proceeding
 
 ### 1b. List open PRs/MRs (primary) + recent branches (secondary)
 
