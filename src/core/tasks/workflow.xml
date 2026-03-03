@@ -6,6 +6,7 @@
     <rule>ALWAYS update frontmatter state when writing output</rule>
     <rule>ALWAYS halt at decision points and wait for user input</rule>
     <rule>ALWAYS load config variables before starting any workflow</rule>
+    <rule>Use native file-reading tools for file content — avoid shell commands for reading files</rule>
   </rules>
 
   <variable-resolution>

@@ -19,6 +19,8 @@ Set `date` = today's date (YYYY-MM-DD).
 **Note:** Context will be collected dynamically in Phase 2.5 after describing the PR.
 No pre-collected context file needed. Context is always fresh and PR-specific.
 
+**File access:** Pre-saved diff files are available at `{session_output}/diffs/` after Phase 1f. Use native file-reading tools throughout this session — avoid shell commands for reading file content. When full file context is needed beyond the diff, read files directly from the working directory. For most accurate review results, ensure the current branch is the PR's target branch.
+
 ---
 
 ## PHASE 1 — SELECT PR
@@ -324,22 +326,13 @@ On completion, store `pr_knowledge_base` = path to the generated context file.
 ---
 
 ## PHASE 3 — REVIEW
-*Execute all review types automatically, one by one.*
 
-**Before each review, confirm these variables are set in working context (all set by earlier phases):**
-- `target_branch`, `base_branch`, `pr_number` — set by Phase 1 (Select PR)
-- `pr_knowledge_base` — set by Phase 2.5 (`{session_output}/pr-context.yaml`)
-- `session_output` — set by Phase 1 when session folder was created
-- `target_repo`, `communication_language` — from config
-- `output_file` — per-review path defined below *(ensures findings are saved to disk for [RR] and [PC] later)*
+**Context:** Confirm `target_branch`, `base_branch`, `session_output`, `pr_knowledge_base`, `communication_language` are in working context from earlier phases. Set `output_file` per review as defined below.
 
-**Scope gate:** Read `user_instructions.review_scope` from `{pr_knowledge_base}`.
-- If `"all"` (or knowledge base missing) → run all reviews 3a–3e normally.
-- If a list (e.g. `[SR, AR]`) → only run reviews whose code is in the list. For each skipped review, print:
-  `⏭️ {Review Name} skipped (not in scope)`
-  and do NOT write its output file.
-
-Review codes: `GR` = General · `SR` = Security · `PR` = Performance · `AR` = Architecture · `BR` = Business
+**Review orchestration:** Read `user_instructions` from `{pr_knowledge_base}`. Use judgment to decide which review skills (3a–3e) to run, in what order, and with what focus — based on the user's actual intent, the PR type, and the project context.
+- No user instructions provided → run all reviews in default order.
+- User specified scope, focus, or constraints → adapt accordingly: skip irrelevant reviews, reorder, or narrow focus to serve the user's actual need. Reviews are optional skills — invoke only what genuinely serves the request.
+- For each skipped review: print `⏭️ {Review Name} skipped` and do not write its output file.
 
 ### 3a. General Review
 Set `output_file` = `{session_output}/general-review.md`
@@ -383,7 +376,7 @@ Print section header: `## 💼 Business Review`
 ## PHASE 4 — GENERATE REPORT
 *Execute automatically.*
 
-Compile all findings from phases 3a–3e.
+Compile all findings from completed reviews.
 
 Sort by severity: 🔴 Blockers first → 🟡 Warnings → 🟢 Suggestions → 📌 Questions.
 

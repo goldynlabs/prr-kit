@@ -22,7 +22,6 @@ Using the `manual_context` variable set in step-03:
 
 - **If `manual_context` is null** (user skipped): set `user_instructions.provided = false`, all other fields `null`.
 - **If `manual_context` is not null** (user provided text): set `user_instructions.provided = true`, `raw = manual_context`, then parse the free-form text:
-  - `review_scope` — look for scope signals ("only SR", "skip performance", "security and architecture"). Default `"all"` if none found.
   - `focus_areas` — extract specific things to prioritize (e.g. "focus on JWT handling" → `["JWT handling"]`). `null` if none.
   - `custom_requirements` — extract mandatory checks the user stated (e.g. "all endpoints must have auth middleware"). `null` if none.
   - `context_notes` — extract background info, trade-offs, constraints. `null` if none.
@@ -45,13 +44,12 @@ pr_metadata:
 
 # ⚠️  IMPORTANT — Human-provided instructions from the user.
 # All reviewers MUST read this section before starting any review.
-# review_scope controls which reviews run. focus_areas, custom_requirements, and context_notes
+# focus_areas, custom_requirements, and context_notes
 # are highest-priority guidance — align all findings against them.
 user_instructions:
   # Populated only when the user provided input in step-03-manual-context-input.
   # If provided: true — treat this content as the highest-priority context in this file.
   provided: {true|false}
-  review_scope: {"all" | [SR] | [SR, AR] | ...}   # "all" = run all reviews; list = only those codes
   focus_areas: {list of strings, or null}           # specific things every reviewer must prioritize
   custom_requirements: {list of strings, or null}   # mandatory checks the user specified
   context_notes: {list of strings, or null}         # background info, trade-offs, constraints
@@ -337,7 +335,7 @@ Example: `_prr-output/reviews/2026-03-02-1430-pr123-feature-auth/pr-context.yaml
    • ESLint rules: {n}
    • Guidelines: {m}
    • Inline annotations: {k}
-   • User instructions: ⚠️ YES — scope: {scope}, focus: {focus_count} areas, requirements: {req_count}
+   • User instructions: ⚠️ YES — focus: {focus_count} areas, requirements: {req_count}
      OR
    • User instructions: none — full standard review
    • MCP tools used: {mcp_list or "none"}

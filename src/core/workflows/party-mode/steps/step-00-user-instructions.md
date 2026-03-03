@@ -41,6 +41,8 @@ Display EXACTLY:
      • Mix freely   "security only, focus on JWT handling, context: auth rewrite in progress"
 ```
 
+**IMPORTANT: Output this prompt as plain text only — do NOT use interactive question UI or structured choice tools. Wait for free-form text input.**
+
 **HALT — wait for user response before continuing.**
 
 ### 3. Parse Response

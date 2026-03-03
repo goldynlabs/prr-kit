@@ -28,18 +28,14 @@ For each file in the PR diff, extract:
 - Directory path segments (e.g., `src`, `stores`)
 
 **File categories:**
-```javascript
-const fileCategories = {
-  'src/components/*.vue': 'vue-component',
-  'src/views/*.vue': 'vue-view',
-  'src/stores/*.js': 'pinia-store',
-  'src/router/*.js': 'vue-router',
-  'src/composables/*.js': 'composable',
-  '*.test.js|*.spec.js': 'test',
-  'src/utils/*.js': 'utility',
-  '*.css|*.scss': 'stylesheet'
-}
-```
+
+Infer category from the file's path, extension, and directory name. Use project-specific structure — there are no fixed categories. Examples of common patterns:
+- `src/components/**` or `ui/**` → component
+- `src/stores/**` or `state/**` → state management
+- `*.test.*` or `*.spec.*` or `tests/**` → test
+- `*.css` / `*.scss` / `*.sass` → stylesheet
+- `src/utils/**` or `helpers/**` → utility
+- Adapt freely based on what the actual project structure reveals
 
 ### 3. Detect Domains
 
@@ -77,29 +73,11 @@ Extract these annotations with:
 
 ### 5. Identify Config Files Needed
 
-Based on file types changed:
-
-```javascript
-const configMapping = {
-  '.vue': ['.eslintrc*', '.prettierrc*', 'vite.config.*'],
-  '.js|.ts': ['.eslintrc*', '.prettierrc*', 'tsconfig.json'],
-  '.py': ['pyproject.toml', '.flake8', 'mypy.ini'],
-  '.css|.scss': ['.stylelintrc*']
-}
-```
+Based on detected file types and stacks, identify relevant config files that likely contain lint rules, formatting, or build constraints. Look for common config patterns for the detected languages/frameworks — linter configs, formatter configs, compiler configs, build tool configs. Don't assume specific filenames; check what actually exists in the repo root.
 
 ### 6. Identify Docs Needed
 
-Based on domains and categories:
-
-```javascript
-const docsMapping = {
-  'vue-component': ['CONTRIBUTING.md → Component section', 'docs/components.md'],
-  'pinia-store': ['ARCHITECTURE.md → State management', 'docs/state-management.md'],
-  'security': ['CONTRIBUTING.md → Security section', 'docs/security.md'],
-  'api': ['docs/api-guidelines.md', 'ARCHITECTURE.md → API section']
-}
-```
+Based on detected domains and categories, identify relevant documentation files that reviewers should consult. Look for CONTRIBUTING.md, ARCHITECTURE.md, CLAUDE.md, AGENTS.md, and any domain-specific docs (e.g., `docs/api.md`, `docs/security.md`). Match docs to the actual domains found in this PR — don't load docs unrelated to the changed files.
 
 ### 7. Detect Technology Stacks
 
@@ -284,37 +262,23 @@ If no stack is confidently detected → `detected_stacks: []` — steps downstre
 
 ### 8. Build Analysis Summary
 
-```javascript
-{
-  "files_changed": [
-    {
-      "path": "src/stores/todoStore.js",
-      "extension": ".js",
-      "category": "pinia-store",
-      "domains": ["state-management"],
-      "annotations": [
-        {
-          "line": 10,
-          "type": "@pattern",
-          "content": "Use composition API only"
-        }
-      ]
-    },
-    {
-      "path": "src/views/TodoListView.vue",
-      "extension": ".vue",
-      "category": "vue-view",
-      "domains": ["ui-components", "state-management"]
-    }
-  ],
-  "context_needs": {
-    "configs": [".eslintrc.js", ".prettierrc", "vite.config.js"],
-    "docs": ["CONTRIBUTING.md", "ARCHITECTURE.md"],
-    "primary": ["CLAUDE.md", "AGENTS.md"],
-    "domains": ["state-management", "ui-components"]
-  },
-  "detected_stacks": ["vue3", "typescript"]
-}
+Build a summary object for all changed files using the structure below. Replace the example values with actual data from this PR:
+
+```
+files_changed:
+  - path: {actual file path}
+    extension: {actual extension}
+    category: {inferred category for this project}
+    domains: [{relevant domains}]
+    annotations: [{any @context/@security/@pattern/@rule comments found}]
+
+context_needs:
+  configs: [{config files found that are relevant to changed file types}]
+  docs: [{doc files relevant to domains changed}]
+  primary: [{CLAUDE.md, AGENTS.md, or equivalent if present}]
+  domains: [{all unique domains across changed files}]
+
+detected_stacks: [{stack keys from step 7}]
 ```
 
 ### 9. Report Analysis

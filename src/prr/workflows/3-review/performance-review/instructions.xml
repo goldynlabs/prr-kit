@@ -10,7 +10,7 @@
       <output>❌ No PR selected. Please run [SP] Select PR first.</output>
       <stop/>
     </check>
-    <action>Read {pr_context} and load git diff</action>
+    <action>Read {pr_context}</action>
     <action>Load PR-specific knowledge base from {pr_knowledge_base}</action>
     <action>Extract performance guidelines from knowledge_base.relevant_guidelines</action>
     <action>Adapt review scope: use knowledge_base.stack_context, knowledge_base.files_analysis, and knowledge_base.reviewer_guidance.performance_review to evaluate which of the default check categories below are relevant to this project and this PR. Categories that have no applicability to the detected project type should be skipped entirely.</action>

@@ -46,27 +46,17 @@ Display EXACTLY:
      • Mix freely   "security only, focus on JWT handling, context: auth rewrite in progress"
 ```
 
+**IMPORTANT: Output this prompt as plain text only — do NOT use interactive question UI or structured choice tools. Wait for free-form text input.**
+
 **HALT — wait for user response before continuing.**
 
 ### 3. Parse Response
 
 **If user pressed Enter / left empty:**
 - Set `user_instructions.provided` = `false`
-- Set `user_instructions.review_scope` = `"all"`
-- Set all other fields to `null`
+- Set all fields to `null`
 
 **If user typed something**, parse the free-form text and extract:
-
-**`review_scope`** — which reviews to run:
-- Parse for scope signals: "only X", "just X", "X only", "skip X", "no X review", "X and Y"
-- Map to codes: `GR` (general), `SR` (security), `PR` (performance), `AR` (architecture), `BR` (business), `IC` (improve code)
-- Examples:
-  - "only security" → `[SR]`
-  - "security and architecture" → `[SR, AR]`
-  - "skip performance" → `[GR, SR, AR, BR]`
-  - "security, focus on JWT" → `[SR]` (scope signal found)
-  - "focus on SQL injection" (no scope signal) → `"all"` (focus only, all reviews still run)
-- If no scope restriction found → `"all"`
 
 **`focus_areas`** — specific things reviewers must prioritize (list of strings), or `null` if none mentioned.
 
@@ -85,7 +75,6 @@ Set `user_instructions.provided` = `true`.
 ```
 ✅ Instructions captured — driving all downstream review steps.
 
-   📋 Scope:         {scope_list joined with ", "  OR  "all reviews (standard)"}
    🎯 Focus:         {focus_areas joined with ", "  OR  "standard coverage"}
    ✅ Requirements:  {custom_requirements joined with ", "  OR  "none"}
    📝 Context:       {context_notes joined with "; "  OR  "none"}

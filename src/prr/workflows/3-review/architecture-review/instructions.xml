@@ -10,7 +10,7 @@
       <output>❌ No PR selected. Please run [SP] Select PR first.</output>
       <stop/>
     </check>
-    <action>Read {pr_context} and load git diff</action>
+    <action>Read {pr_context}</action>
     <action>Load PR-specific knowledge base from {pr_knowledge_base}</action>
     <action>Extract architectural patterns from knowledge_base.relevant_guidelines (ARCHITECTURE.md sections, ADRs)</action>
     <action>Check pattern annotations from knowledge_base.inline_context (@pattern:)</action>

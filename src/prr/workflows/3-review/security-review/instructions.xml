@@ -16,7 +16,6 @@
     <action>Check for security annotations from knowledge_base.inline_context (@security:)</action>
     <action>Adapt review scope: use knowledge_base.stack_context, knowledge_base.files_analysis, and knowledge_base.reviewer_guidance.security_review to evaluate which of the default check categories below are relevant to this project and this PR. Step 2 (hardcoded secrets) always runs. Other categories should be evaluated for relevance before running.</action>
     <action>Identify stack-specific security rules from knowledge_base.stack_context.rules — these will be applied as additional checks in the dedicated step below.</action>
-    <action>Run: git diff {base_branch}...{target_branch} in {target_repo}</action>
     <output>🔒 Starting Security Review — Thinking like an attacker
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Scope: Secrets scan (always) + adapted checks for detected stack
