@@ -448,4 +448,4 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 ## License
 
-[MIT](LICENSE) © mrquangthai278
+[MIT](LICENSE) © goldynlabs

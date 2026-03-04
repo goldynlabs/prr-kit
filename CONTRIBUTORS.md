@@ -6,7 +6,7 @@ Thank you to everyone who has contributed to PR Review Kit!
 
 | Name | Role | GitHub |
 |------|------|--------|
-| mrquangthai278 | Creator & Maintainer | — |
+| goldynlabs | Creator & Maintainer | — |
 
 ## How to Get Listed
 

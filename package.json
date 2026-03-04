@@ -38,11 +38,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mrquangthai278/prr-kit.git"
+    "url": "git+https://github.com/goldynlabs/prr-kit.git"
   },
   "homepage": "https://prrkit.sitenow.cloud/",
   "bugs": {
-    "url": "https://github.com/mrquangthai278/prr-kit/issues"
+    "url": "https://github.com/goldynlabs/prr-kit/issues"
   },
   "license": "MIT",
   "dependencies": {
